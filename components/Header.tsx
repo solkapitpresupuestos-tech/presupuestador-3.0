@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Header() {
   return (
     <header className="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
@@ -19,10 +21,16 @@ export default function Header() {
           </a>
           <a
             href="#contacto"
+            className="text-slate-300 hover:text-amber-400 transition-colors"
+          >
+            Contacto
+          </a>
+          <Link
+            href="/presupuesto"
             className="bg-amber-400 text-slate-900 px-4 py-1.5 rounded-full hover:bg-amber-300 transition-colors font-semibold"
           >
-            Presupuesto
-          </a>
+            Calcular presupuesto
+          </Link>
         </nav>
       </div>
     </header>
