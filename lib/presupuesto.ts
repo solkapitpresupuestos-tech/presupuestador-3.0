@@ -1,3 +1,5 @@
+import { calcWindowCost } from "./windows";
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type ProjectStatus =
@@ -19,9 +21,17 @@ export interface ProductDef {
   options: Record<string, { label: string; choices: { value: string; label: string; delta: number }[] }>;
 }
 
+export interface WindowCalc {
+  systemKey: string;        // key from WINDOW_SYSTEMS
+  aperturaType: string;     // 'corredera_2h', 'oscilobatiente', 'fija', etc.
+  colorKey: string;         // 'LB', 'LC', etc.
+  glassKey: string;         // 'climalit_4124', etc.
+  mountKey: string;         // 'sin_montaje', etc.
+}
+
 export interface LineItem {
   id: string;
-  productKey: string;
+  productKey: string;       // 'ventana_win' for profile-based windows; CATALOGUE key otherwise
   description: string;
   widthCm: string;
   heightCm: string;
@@ -29,7 +39,17 @@ export interface LineItem {
   selectedOptions: Record<string, string>;
   manualPrice: string;
   manualLabel: string;
+  windowCalc?: WindowCalc;  // set when productKey === 'ventana_win'
 }
+
+export type ClientType = "particular" | "constructora" | "taller" | "otro";
+
+export const CLIENT_TYPE_META: Record<ClientType, { label: string; beneficioPct: number }> = {
+  particular:   { label: "Particular",   beneficioPct: 35 },
+  constructora: { label: "Constructora", beneficioPct: 25 },
+  taller:       { label: "Taller",       beneficioPct: 20 },
+  otro:         { label: "Otro",         beneficioPct: 30 },
+};
 
 export interface Project {
   id: string;
@@ -43,11 +63,15 @@ export interface Project {
   clientEmail: string;
   clientAddress: string;
   clientNif: string;
+  clientType: ClientType;   // tipo de cliente → determina % beneficio
+  beneficioPct: string;     // % override (vacío = usar el del clientType)
   // Project
   projectDescription: string;
   location: string;
   notes: string;
   validityDays: string;
+  deliveryWeeks: string;    // plazo de entrega en semanas
+  paymentTerms: string;     // condiciones de pago
   // Quote
   items: LineItem[];
   discount: string;         // % as string
@@ -247,9 +271,19 @@ export function optionsDelta(productKey: string, selectedOptions: Record<string,
 }
 
 export function calcLineTotal(item: LineItem): number {
+  const qty = Math.max(1, parseFloat(item.qty) || 1);
+
+  // Profile-based window calculator
+  if (item.productKey === "ventana_win" && item.windowCalc) {
+    const wc = item.windowCalc;
+    const wM = (parseFloat(item.widthCm) || 0) / 100;
+    const hM = (parseFloat(item.heightCm) || 0) / 100;
+    const breakdown = calcWindowCost(wc.systemKey, wc.aperturaType, wc.colorKey, wc.glassKey, wc.mountKey, wM, hM);
+    return breakdown.total * qty;
+  }
+
   const def = CATALOGUE[item.productKey];
   if (!def) return 0;
-  const qty = Math.max(1, parseFloat(item.qty) || 1);
   if (item.productKey === "otro") return (parseFloat(item.manualPrice) || 0) * qty;
   const price = def.basePrice + optionsDelta(item.productKey, item.selectedOptions);
   if (def.unit === "ud") return price * qty;
@@ -268,13 +302,19 @@ export function calcArea(item: LineItem): number | null {
   return Math.max((w * h) / 10000, def.minArea ?? 0);
 }
 
-export function calcTotals(items: LineItem[], discount: string) {
+export function calcTotals(items: LineItem[], discount: string, clientType?: ClientType, beneficioPctOverride?: string) {
   const subtotal = items.reduce((a, i) => a + calcLineTotal(i), 0);
   const pct = Math.min(100, Math.max(0, parseFloat(discount) || 0));
   const discountAmt = (subtotal * pct) / 100;
-  const base = subtotal - discountAmt;
+  const afterDiscount = subtotal - discountAmt;
+  // Beneficio
+  const beneficioPct = beneficioPctOverride && parseFloat(beneficioPctOverride) >= 0
+    ? parseFloat(beneficioPctOverride)
+    : clientType ? CLIENT_TYPE_META[clientType].beneficioPct : 0;
+  const beneficioAmt = (afterDiscount * beneficioPct) / 100;
+  const base = afterDiscount + beneficioAmt;
   const iva = base * 0.21;
-  return { subtotal, discountAmt, discountPct: pct, base, iva, total: base + iva };
+  return { subtotal, discountAmt, discountPct: pct, beneficioPct, beneficioAmt, base, iva, total: base + iva };
 }
 
 export function fmt(n: number) {
@@ -284,12 +324,24 @@ export function fmt(n: number) {
 // ─── Default item factory ─────────────────────────────────────────────────────
 
 export function makeItem(id: string): LineItem {
-  const def = CATALOGUE["ventana_pvc"];
-  const selectedOptions: Record<string, string> = {};
-  Object.entries(def.options).forEach(([k, opt]) => {
-    selectedOptions[k] = opt.choices[1]?.value ?? opt.choices[0].value;
-  });
-  return { id, productKey: "ventana_pvc", description: "", widthCm: "", heightCm: "", qty: "1", selectedOptions, manualPrice: "", manualLabel: "" };
+  return {
+    id,
+    productKey: "ventana_win",
+    description: "",
+    widthCm: "",
+    heightCm: "",
+    qty: "1",
+    selectedOptions: {},
+    manualPrice: "",
+    manualLabel: "",
+    windowCalc: {
+      systemKey: "ALBA_PROS_70_RPT",
+      aperturaType: "oscilobatiente",
+      colorKey: "LB",
+      glassKey: "climalit_4124",
+      mountKey: "sin_retirada",
+    },
+  };
 }
 
 // ─── localStorage store ───────────────────────────────────────────────────────
@@ -334,8 +386,9 @@ export function createBlankProject(): Project {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     clientName: "", clientPhone: "", clientEmail: "", clientAddress: "", clientNif: "",
+    clientType: "particular", beneficioPct: "",
     projectDescription: "", location: "", notes: "Presupuesto válido por el período indicado. Precios incluyen mano de obra e instalación en Mallorca. Sujeto a confirmación en visita técnica.",
-    validityDays: "30",
+    validityDays: "30", deliveryWeeks: "4-6", paymentTerms: "50% a la firma del contrato, 50% a la entrega e instalación.",
     items: [makeItem(crypto.randomUUID())],
     discount: "",
   };

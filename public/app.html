@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VALAUNI — Presupuestos v2.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+<style>
+:root{
+  --blue:#1F4E79;--blue-light:#2e6da4;--blue-pale:#dbeafe;
+  --green:#16a34a;--red:#dc2626;--gray:#64748b;--gold:#D2A01E;
+  --bg:#f1f5f9;--white:#fff;--border:#e2e8f0;--shadow:0 1px 4px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:#1e293b;font-size:14px}
+/* header */
+.app-header{background:linear-gradient(135deg,var(--blue) 0%,var(--blue-light) 100%);padding:12px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.app-header img{height:36px;border-radius:6px;background:#fff;padding:3px}
+.app-header h1{color:#fff;font-size:18px;font-weight:700;letter-spacing:-.3px}
+.app-header span{color:rgba(255,255,255,.7);font-size:12px;margin-left:auto}
+/* layout */
+.container{max-width:1440px;margin:0 auto;padding:20px}
+/* cards */
+.card{background:var(--white);border-radius:12px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:16px;overflow:hidden}
+.card-header{background:linear-gradient(135deg,var(--blue) 0%,var(--blue-light) 100%);color:#fff;padding:12px 18px;font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px}
+.card-body{padding:18px}
+/* grid */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+/* form */
+label{display:block;font-size:12px;font-weight:500;color:var(--gray);margin-bottom:4px}
+input,select,textarea{width:100%;padding:8px 10px;border:2px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;outline:none;transition:border-color .2s}
+input:focus,select:focus{border-color:var(--blue)}
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:all .2s;text-decoration:none}
+.btn-primary{background:var(--green);color:#fff}.btn-primary:hover{background:#15803d}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:var(--blue-light)}
+.btn-red{background:var(--red);color:#fff}.btn-red:hover{background:#b91c1c}
+.btn-ghost{background:#f8fafc;color:var(--gray);border:1px solid var(--border)}.btn-ghost:hover{background:#f1f5f9}
+.btn-gold{background:var(--gold);color:#fff}.btn-gold:hover{background:#b8880f}
+/* positions */
+.position-row{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;position:relative}
+.position-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.pos-num{background:var(--blue);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+.position-grid{display:grid;grid-template-columns:2fr 1.5fr 80px 80px 60px 1fr 1fr;gap:10px;align-items:end}
+.btn-remove{background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:4px;line-height:1}
+/* otros conceptos */
+.concepto-row{display:grid;grid-template-columns:2fr 80px 120px 120px 36px;gap:8px;align-items:end;margin-bottom:8px}
+/* client type */
+.radio-group{display:flex;gap:10px;flex-wrap:wrap}
+.radio-option{display:flex;align-items:center;gap:6px;padding:8px 14px;border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;font-weight:500}
+.radio-option:has(input:checked){border-color:var(--blue);background:var(--blue-pale);color:var(--blue)}
+.radio-option input{display:none}
+/* calcular btn */
+.calc-btn-wrap{text-align:center;padding:20px 0}
+.btn-calcular{background:linear-gradient(135deg,var(--green) 0%,#15803d 100%);color:#fff;padding:14px 40px;font-size:16px;border-radius:12px;border:none;cursor:pointer;font-family:inherit;font-weight:700;box-shadow:0 4px 12px rgba(22,163,74,.3);transition:transform .15s}
+.btn-calcular:hover{transform:translateY(-2px)}
+/* tabs */
+.tabs{display:flex;border-bottom:2px solid var(--border);background:#fff;padding:0 18px}
+.tab-btn{padding:12px 18px;border:none;background:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;color:var(--gray);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;white-space:nowrap}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:700}
+.tab-panel{display:none;padding:18px}.tab-panel.active{display:block}
+/* accordion */
+.accordion{border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.accordion-header{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;background:#f8fafc;transition:background .2s}
+.accordion-header:hover{background:#f1f5f9}
+.accordion-header .badge{background:var(--blue);color:#fff;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600}
+.accordion-body{display:none;padding:16px}
+.accordion-body.open{display:block}
+/* desglose cards grid */
+.desglose-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.d-card{background:#f8fafc;border-radius:8px;padding:12px;border:1px solid var(--border)}
+.d-card-title{font-size:11px;font-weight:600;color:var(--gray);margin-bottom:8px;text-transform:uppercase}
+.d-card-val{font-size:16px;font-weight:700;color:#1e293b}
+.d-card-sub{font-size:11px;color:var(--gray);margin-top:2px}
+.d-card.green .d-card-val{color:var(--green)}
+.d-card.gold .d-card-val{color:var(--gold)}
+.d-card.blue .d-card-val{color:var(--blue)}
+/* summary table */
+.sum-table{width:100%;border-collapse:collapse}
+.sum-table td{padding:7px 10px;border-bottom:1px solid var(--border)}
+.sum-table td:last-child{text-align:right;font-weight:600}
+.sum-table tr.total td{background:var(--blue);color:#fff;font-weight:700;font-size:14px}
+.sum-table tr.beneficio td{background:#fef9c3}
+.sum-table tr.montaje td{background:#f0fdf4}
+/* bar chart */
+.bar-wrap{margin-bottom:16px}
+.bar-label{font-size:12px;font-weight:600;margin-bottom:6px;color:var(--blue)}
+.bar-visual{display:flex;height:22px;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:#f1f5f9}
+.bar-segment{display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:600;overflow:hidden;min-width:2px;transition:all .3s}
+.bar-waste{background:#cbd5e1;flex-shrink:0}
+.bar-info{font-size:11px;color:var(--gray);margin-top:4px}
+/* compra table */
+.compra-table{width:100%;border-collapse:collapse;font-size:13px}
+.compra-table th{background:var(--blue);color:#fff;padding:8px 12px;text-align:left;font-weight:600;font-size:12px}
+.compra-table td{padding:8px 12px;border-bottom:1px solid var(--border)}
+.compra-table tr:hover td{background:#f8fafc}
+/* economic summary */
+.eco-table{width:100%;border-collapse:collapse}
+.eco-table td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:14px}
+.eco-table td:last-child{text-align:right;font-weight:700}
+.eco-section{font-weight:700;font-size:12px;color:var(--gray);text-transform:uppercase;padding:14px 14px 6px;letter-spacing:.5px}
+.eco-total{background:var(--blue);color:#fff;font-size:16px}
+.eco-total td{color:#fff!important;font-weight:700}
+.eco-subtotal{background:var(--blue-pale)}
+.eco-beneficio{background:#fef9c3}
+.eco-otros{background:#fff7ed}
+/* action bar */
+.action-bar{display:flex;gap:10px;justify-content:flex-end;padding:14px 18px;border-top:1px solid var(--border);background:#f8fafc}
+/* badge */
+.badge-tipo{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:var(--blue-pale);color:var(--blue)}
+/* responsive */
+@media(max-width:900px){
+  .position-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .desglose-grid{grid-template-columns:1fr 1fr}
+  .grid-4{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .radio-group{flex-direction:column}
+}
+/* toast */
+.toast{position:fixed;bottom:20px;right:20px;background:#1e293b;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transform:translateY(20px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+/* HOME SCREEN */
+#pantalla-home{display:none;max-width:1100px;margin:0 auto;padding:20px}
+#pantalla-editor{display:none}
+.home-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:#fff;border-radius:12px;border:1px solid var(--border);box-shadow:var(--shadow);padding:16px}
+.stat-card .stat-label{font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.05em}
+.stat-card .stat-val{font-size:24px;font-weight:700;color:#1e293b;margin-top:4px}
+.stat-card .stat-sub{font-size:11px;color:var(--gray);margin-top:2px}
+.home-toolbar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.home-toolbar input{flex:1;min-width:200px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;outline:none}
+.home-toolbar input:focus{border-color:var(--blue)}
+.proj-table{background:#fff;border-radius:12px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
+.proj-table-head{display:grid;grid-template-columns:90px 1fr 1fr 110px 120px 80px;gap:12px;padding:10px 16px;background:#f8fafc;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.05em}
+.proj-row{display:grid;grid-template-columns:90px 1fr 1fr 110px 120px 80px;gap:12px;padding:12px 16px;border-bottom:1px solid #f1f5f9;align-items:center;cursor:pointer;transition:background .15s}
+.proj-row:hover{background:#f8fafc}
+.proj-row:last-child{border-bottom:none}
+.proj-num{font-family:monospace;font-weight:700;font-size:13px;color:#1e293b}
+.proj-date{font-size:11px;color:var(--gray);margin-top:2px}
+.proj-client{font-weight:600;font-size:13px;color:#1e293b}
+.proj-desc{font-size:12px;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.proj-total{font-weight:700;font-size:13px;color:#1e293b;text-align:right}
+.status-badge{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px}
+.sb-borrador{background:#f1f5f9;color:#64748b}
+.sb-enviado{background:#dbeafe;color:#1d4ed8}
+.sb-aceptado{background:#dcfce7;color:#15803d}
+.sb-en_obra{background:#ffedd5;color:#c2410c}
+.sb-finalizado{background:#1e293b;color:#fff}
+.sb-cancelado{background:#fee2e2;color:#dc2626}
+.proj-actions{display:flex;gap:4px;justify-content:flex-end}
+.proj-actions button{background:none;border:none;cursor:pointer;padding:5px 7px;border-radius:6px;font-size:14px;color:var(--gray);transition:all .15s}
+.proj-actions button:hover{background:#f1f5f9;color:var(--blue)}
+.proj-actions button.del:hover{background:#fee2e2;color:var(--red)}
+.empty-home{text-align:center;padding:60px 20px;color:var(--gray)}
+.empty-home .empty-icon{font-size:48px;margin-bottom:12px;opacity:.4}
+.header-back{background:rgba(255,255,255,.15);border:none;color:#fff;cursor:pointer;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;font-family:inherit;display:flex;align-items:center;gap:6px;transition:background .2s}
+.header-back:hover{background:rgba(255,255,255,.25)}
+.header-status-sel{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:5px 10px;border-radius:8px;font-size:12px;font-family:inherit;cursor:pointer;outline:none}
+.header-status-sel option{background:#1F4E79;color:#fff}
+@media(max-width:700px){
+  .home-stats{grid-template-columns:1fr 1fr}
+  .proj-table-head,.proj-row{grid-template-columns:80px 1fr 90px 70px}
+  .proj-row .proj-desc,.proj-row .proj-actions{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <img src="./logo_valauni.png" alt="VALAUNI" onerror="this.style.display='none'">
+  <h1 id="header-title" style="cursor:pointer" onclick="showHome()">VALAUNI — Presupuestos</h1>
+  <div id="header-editor-controls" style="display:none;margin-left:auto;display:none;align-items:center;gap:10px">
+    <select class="header-status-sel" id="header-status" onchange="setCurrentStatus(this.value)">
+      <option value="borrador">Borrador</option>
+      <option value="enviado">Enviado</option>
+      <option value="aceptado">Aceptado</option>
+      <option value="en_obra">En obra</option>
+      <option value="finalizado">Finalizado</option>
+      <option value="cancelado">Cancelado</option>
+    </select>
+    <span id="num-pres" style="color:rgba(255,255,255,.8);font-size:13px"></span>
+    <button class="header-back" onclick="guardarYVolver()"><i class="fas fa-arrow-left"></i> Volver</button>
+  </div>
+</header>
+
+<!-- PANTALLA HOME -->
+<div id="pantalla-home">
+  <div class="home-stats">
+    <div class="stat-card"><div class="stat-label">Total presupuestos</div><div class="stat-val" id="stat-total">0</div></div>
+    <div class="stat-card"><div class="stat-label">Activos</div><div class="stat-val" id="stat-activos">0</div><div class="stat-sub">en curso</div></div>
+    <div class="stat-card"><div class="stat-label">Pendiente cobro</div><div class="stat-val" id="stat-pendiente">0 €</div><div class="stat-sub">activos sin cerrar</div></div>
+    <div class="stat-card"><div class="stat-label">Aceptados / En obra</div><div class="stat-val" id="stat-aceptados">0 €</div></div>
+  </div>
+  <div class="home-toolbar">
+    <input type="text" id="home-search" placeholder="Buscar por cliente, nº, descripción…" oninput="renderHome()">
+    <select id="home-filter" onchange="renderHome()" style="padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;background:#fff;outline:none">
+      <option value="">Todos los estados</option>
+      <option value="borrador">Borrador</option>
+      <option value="enviado">Enviado</option>
+      <option value="aceptado">Aceptado</option>
+      <option value="en_obra">En obra</option>
+      <option value="finalizado">Finalizado</option>
+      <option value="cancelado">Cancelado</option>
+    </select>
+    <button class="btn btn-blue" onclick="nuevoPresupuesto()"><i class="fas fa-plus"></i> Nuevo presupuesto</button>
+  </div>
+  <div class="proj-table">
+    <div class="proj-table-head">
+      <span>Nº</span><span>Cliente</span><span>Descripción</span><span style="text-align:right">Importe</span><span>Estado</span><span style="text-align:right">Acc.</span>
+    </div>
+    <div id="proj-list"></div>
+  </div>
+</div>
+
+<div id="pantalla-editor">
+<div class="container">
+
+<!-- SECCIÓN 1: Datos del presupuesto -->
+<div class="card">
+  <div class="card-header"><i class="fas fa-file-alt"></i> Sección 1 — Datos del Presupuesto</div>
+  <div class="card-body">
+    <div class="grid-4" style="margin-bottom:12px">
+      <div><label>Nº Presupuesto</label><input id="numPres" type="text" placeholder="VAL-001"></div>
+      <div><label>Fecha</label><input id="fecha" type="date"></div>
+      <div><label>Nombre Cliente</label><input id="cliente" type="text" placeholder="Nombre completo"></div>
+      <div><label>CIF/NIF</label><input id="cif" type="text" placeholder="12345678A"></div>
+    </div>
+    <div class="grid-4">
+      <div><label>Teléfono</label><input id="telefono" type="tel" placeholder="+34 600 000 000"></div>
+      <div><label>Email</label><input id="email" type="email" placeholder="cliente@email.com"></div>
+      <div style="grid-column:span 2"><label>Dirección de Obra</label><input id="direccion" type="text" placeholder="Calle, número, localidad"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECCIÓN 2: Posiciones de carpintería -->
+<div class="card">
+  <div class="card-header">
+    <i class="fas fa-window-maximize"></i> Sección 2 — Posiciones de Carpintería
+    <button class="btn btn-primary" style="margin-left:auto;padding:6px 12px;font-size:12px" onclick="addPosicion()"><i class="fas fa-plus"></i> Añadir posición</button>
+  </div>
+  <div class="card-body">
+    <div id="posiciones-container"></div>
+  </div>
+</div>
+
+<!-- SECCIÓN 3: Otros conceptos -->
+<div class="card">
+  <div class="card-header">
+    <i class="fas fa-list"></i> Sección 3 — Otros Conceptos
+    <span id="badge-otros" style="margin-left:8px;background:var(--gold);color:#fff;border-radius:12px;padding:2px 10px;font-size:12px">0,00 €</span>
+    <button class="btn btn-ghost" style="margin-left:auto;padding:6px 12px;font-size:12px" onclick="addConcepto()"><i class="fas fa-plus"></i> Añadir concepto</button>
+  </div>
+  <div class="card-body">
+    <div id="conceptos-header" style="display:grid;grid-template-columns:2fr 80px 120px 120px 36px;gap:8px;margin-bottom:6px">
+      <span style="font-size:12px;font-weight:600;color:var(--gray)">Descripción</span>
+      <span style="font-size:12px;font-weight:600;color:var(--gray)">Cantidad</span>
+      <span style="font-size:12px;font-weight:600;color:var(--gray)">Precio unitario</span>
+      <span style="font-size:12px;font-weight:600;color:var(--gray)">Total</span>
+      <span></span>
+    </div>
+    <div id="conceptos-container"></div>
+  </div>
+</div>
+
+<!-- SECCIÓN 4: Tipo de cliente -->
+<div class="card">
+  <div class="card-header"><i class="fas fa-user-tie"></i> Sección 4 — Tipo de Cliente</div>
+  <div class="card-body">
+    <div class="radio-group" id="clienteTipoGroup">
+      <label class="radio-option"><input type="radio" name="clienteTipo" value="taller" onchange="updateClienteTipo()"> <i class="fas fa-tools"></i> Taller / Instalador (+15%)</label>
+      <label class="radio-option"><input type="radio" name="clienteTipo" value="constructor" onchange="updateClienteTipo()"> <i class="fas fa-hard-hat"></i> Constructor / Promotor (+20%)</label>
+      <label class="radio-option"><input type="radio" name="clienteTipo" value="particular" onchange="updateClienteTipo()" checked> <i class="fas fa-home"></i> Particular (+35%)</label>
+    </div>
+  </div>
+</div>
+
+<!-- CALCULAR -->
+<div class="calc-btn-wrap">
+  <button class="btn-calcular" onclick="calcularPresupuesto()"><i class="fas fa-calculator"></i> Calcular Presupuesto</button>
+</div>
+
+<!-- RESULTADOS -->
+<div class="card" id="resultados-card" style="display:none">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(0)"><i class="fas fa-layer-group"></i> Desglose Posiciones</button>
+    <button class="tab-btn" onclick="switchTab(1)"><i class="fas fa-cut"></i> Optimización Barras</button>
+    <button class="tab-btn" onclick="switchTab(2)"><i class="fas fa-shopping-cart"></i> Lista de Compra</button>
+    <button class="tab-btn" onclick="switchTab(3)"><i class="fas fa-euro-sign"></i> Resumen Económico</button>
+  </div>
+  <div id="tab0" class="tab-panel active"></div>
+  <div id="tab1" class="tab-panel"></div>
+  <div id="tab2" class="tab-panel"></div>
+  <div id="tab3" class="tab-panel"></div>
+  <div class="action-bar">
+    <button class="btn btn-ghost" onclick="exportarExcel()"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+    <button class="btn btn-blue" onclick="generarPDF()"><i class="fas fa-file-pdf"></i> Generar PDF</button>
+  </div>
+</div>
+
+</div><!-- /container -->
+</div><!-- /pantalla-editor -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// TARIFA — Series disponibles
+// ═══════════════════════════════════════════════════════════════
+const TARIFA = {
+  // ── CORREDERAS ──
+  ALBA_PROS_60: {
+    nombre:'ALBA PROS 60', tipo:'corredera', hojas:2, rpt:false, barraLongitud:6500,
+    descripcion:'Corredera 2 hojas aluminio lacado, sin RPT',
+    herrajes:55, epdm_ml:2.50,
+    perfiles:{
+      marco:{nombre:'Marco Corredera 60',codigo:'M60',precio_ml:5.09},
+      hoja:{nombre:'Hoja Corredera 60',codigo:'H60',precio_ml:4.66},
+      refuerzo_central:{nombre:'Cruce Panorámico',codigo:'CR60',precio_ml:3.12},
+      junquillo:{nombre:'Junquillo Acristalamiento',codigo:'JQ60',precio_ml:2.50},
+      guia_suelo:{nombre:'Guía Suelo',codigo:'GS60',precio_ml:2.00},
+    }
+  },
+  ALBA_PROS_70: {
+    nombre:'ALBA PROS 70', tipo:'corredera', hojas:2, rpt:false, barraLongitud:6500,
+    descripcion:'Corredera 2 hojas aluminio lacado, sin RPT',
+    herrajes:65, epdm_ml:2.50,
+    perfiles:{
+      marco:{nombre:'Marco Corredera 70',codigo:'M70',precio_ml:6.89},
+      hoja:{nombre:'Hoja Corredera 70',codigo:'H70',precio_ml:7.13},
+      refuerzo_central:{nombre:'Cruce Panorámico 70',codigo:'CR70',precio_ml:4.82},
+      junquillo:{nombre:'Junquillo',codigo:'JQ70',precio_ml:3.00},
+      guia_suelo:{nombre:'Guía Suelo 70',codigo:'GS70',precio_ml:2.50},
+    }
+  },
+  ALBA_PROS_70_RPT: {
+    nombre:'ALBA PROS 70 RPT', tipo:'corredera', hojas:2, rpt:true, barraLongitud:6500,
+    descripcion:'Corredera 2 hojas RPT, alta eficiencia',
+    herrajes:75, epdm_ml:2.50,
+    perfiles:{
+      marco:{nombre:'RT865 Marco Cerrado',codigo:'RT865',precio_ml:8.77},
+      hoja:{nombre:'RT861 Hoja',codigo:'RT861',precio_ml:9.59},
+      refuerzo_central:{nombre:'Cruce Panorámico',codigo:'CR70R',precio_ml:4.15},
+      junquillo:{nombre:'Junquillo RPT',codigo:'JQ70R',precio_ml:3.50},
+      guia_suelo:{nombre:'Guía Suelo',codigo:'GS70R',precio_ml:2.80},
+    }
+  },
+  ALBA_PROS_75_RPT: {
+    nombre:'ALBA PROS 75 RPT', tipo:'corredera', hojas:2, rpt:true, barraLongitud:6500,
+    descripcion:'Corredera 2 hojas RPT alta prestación',
+    herrajes:85, epdm_ml:2.50,
+    perfiles:{
+      marco:{nombre:'RT965 Marco 75 RPT',codigo:'RT965',precio_ml:9.34},
+      hoja:{nombre:'RT961 Hoja 75 RPT',codigo:'RT961',precio_ml:9.89},
+      refuerzo_central:{nombre:'92841 Cruce 75 RPT',codigo:'92841',precio_ml:4.34},
+      junquillo:{nombre:'Junquillo 75',codigo:'JQ75R',precio_ml:4.00},
+      guia_suelo:{nombre:'Guía Suelo 75',codigo:'GS75R',precio_ml:3.00},
+    }
+  },
+  ALBA_PROS_85_RPT: {
+    nombre:'ALBA PROS 85 RPT', tipo:'corredera', hojas:2, rpt:true, barraLongitud:6500,
+    descripcion:'Corredera premium 2 hojas RPT',
+    herrajes:95, epdm_ml:2.50,
+    perfiles:{
+      marco:{nombre:'RT890 Marco',codigo:'RT890',precio_ml:12.93},
+      hoja:{nombre:'RT881 Hoja',codigo:'RT881',precio_ml:11.50},
+      refuerzo_central:{nombre:'Cruce 85',codigo:'CR85',precio_ml:5.80},
+      junquillo:{nombre:'Junquillo 85',codigo:'JQ85',precio_ml:4.50},
+      guia_suelo:{nombre:'Guía Suelo 85',codigo:'GS85',precio_ml:3.50},
+    }
+  },
+  // ── PRACTICABLES ──
+  ALBA_A45: {
+    nombre:'ALBA A45', tipo:'practicable', hojas:1, rpt:false, barraLongitud:6500,
+    descripcion:'Practicable 1 hoja aluminio lacado',
+    herrajes:65, epdm_ml:2.00,
+    perfiles:{
+      marco:{nombre:'58955 Cerco A45',codigo:'58955',precio_ml:5.97},
+      hoja:{nombre:'62672 Hoja A45',codigo:'62672',precio_ml:7.19},
+      tapajuntas:{nombre:'Tapajuntas 40',codigo:'TJ40',precio_ml:1.80},
+      junquillo:{nombre:'59849 Junquillo 31',codigo:'59849',precio_ml:2.20},
+    }
+  },
+  ALBA_A45_2H: {
+    nombre:'ALBA A45 2H', tipo:'practicable', hojas:2, rpt:false, barraLongitud:6500,
+    descripcion:'Practicable 2 hojas aluminio lacado',
+    herrajes:90, epdm_ml:2.00,
+    perfiles:{
+      marco:{nombre:'58955 Cerco A45',codigo:'58955',precio_ml:5.97},
+      hoja:{nombre:'62672 Hoja A45',codigo:'62672',precio_ml:7.19},
+      tapajuntas:{nombre:'Tapajuntas 40',codigo:'TJ40',precio_ml:1.80},
+      junquillo:{nombre:'59849 Junquillo 31',codigo:'59849',precio_ml:2.20},
+    }
+  },
+  ALFIL_45_RPT: {
+    nombre:'ALFIL 45 RPT', tipo:'practicable', hojas:1, rpt:true, barraLongitud:6500,
+    descripcion:'Practicable 1 hoja RPT',
+    herrajes:80, epdm_ml:2.00,
+    perfiles:{
+      marco:{nombre:'RT31A45 Marco Alfil 45',codigo:'RT31A45',precio_ml:8.05},
+      hoja:{nombre:'RT25A45 Hoja Recta',codigo:'RT25A45',precio_ml:8.76},
+      tapajuntas:{nombre:'Tapajuntas Alfil',codigo:'TJA',precio_ml:2.60},
+      junquillo:{nombre:'59849 Junquillo 31',codigo:'59849',precio_ml:2.20},
+    }
+  },
+  ALBA_65_RPT: {
+    nombre:'ALBA 65 RPT', tipo:'practicable', hojas:2, rpt:true, barraLongitud:6500,
+    descripcion:'Practicable 2 hojas RPT',
+    herrajes:90, epdm_ml:2.00,
+    perfiles:{
+      marco:{nombre:'RT650 Marco',codigo:'RT650',precio_ml:9.17},
+      hoja:{nombre:'RT651 Hoja',codigo:'RT651',precio_ml:9.87},
+      tapajuntas:{nombre:'Tapajuntas RT650',codigo:'TJ650',precio_ml:3.20},
+      junquillo:{nombre:'Junquillo 65',codigo:'JQ65',precio_ml:3.80},
+    }
+  },
+  // ── PUERTAS ──
+  ALBA_65_RPT_PUERTA_1H: {
+    nombre:'ALBA 65 RPT PUERTA 1H', tipo:'puerta', hojas:1, rpt:true, barraLongitud:6500,
+    descripcion:'Puerta practicable 1 hoja RPT',
+    herrajes:120, epdm_ml:2.50,
+    perfiles:{
+      marco:{nombre:'RT650 Marco',codigo:'RT650P',precio_ml:9.17},
+      hoja:{nombre:'RT651 Hoja',codigo:'RT651P',precio_ml:9.87},
+      tapajuntas:{nombre:'Tapajuntas RT650',codigo:'TJ650P',precio_ml:3.20},
+      junquillo:{nombre:'Junquillo Puerta',codigo:'JQP',precio_ml:3.80},
+    }
+  },
+  ALBA_65_RPT_PUERTA_2H: {
+    nombre:'ALBA 65 RPT PUERTA 2H', tipo:'puerta', hojas:2, rpt:true, barraLongitud:6500,
+    descripcion:'Puerta practicable 2 hojas RPT',
+    herrajes:150, epdm_ml:2.50,
+    perfiles:{
+      marco:{nombre:'RT650 Marco',codigo:'RT650P',precio_ml:9.17},
+      hoja:{nombre:'RT651 Hoja',codigo:'RT651P',precio_ml:9.87},
+      tapajuntas:{nombre:'Tapajuntas RT650',codigo:'TJ650P',precio_ml:3.20},
+      junquillo:{nombre:'Junquillo Puerta',codigo:'JQP',precio_ml:3.80},
+    }
+  },
+  // ── OSCILOBATIENTE ──
+  ALBA_65_OB_1H: {
+    nombre:'ALBA 65 OB 1H', tipo:'oscilobatiente', hojas:1, rpt:false, barraLongitud:6500,
+    descripcion:'Oscilobatiente 1 hoja',
+    herrajes:90, epdm_ml:2.00,
+    perfiles:{
+      marco:{nombre:'RT650 Marco',codigo:'RT650O',precio_ml:9.17},
+      hoja:{nombre:'RT651 Hoja',codigo:'RT651O',precio_ml:9.87},
+      tapajuntas:{nombre:'Tapajuntas',codigo:'TJ650O',precio_ml:3.20},
+      junquillo:{nombre:'Junquillo',codigo:'JQ650O',precio_ml:3.80},
+    }
+  },
+  ALBA_65_OB_2H: {
+    nombre:'ALBA 65 OB 2H', tipo:'oscilobatiente', hojas:2, rpt:false, barraLongitud:6500,
+    descripcion:'Oscilobatiente 2 hojas',
+    herrajes:130, epdm_ml:2.00,
+    perfiles:{
+      marco:{nombre:'RT650 Marco',codigo:'RT650O2',precio_ml:9.17},
+      hoja:{nombre:'RT651 Hoja',codigo:'RT651O2',precio_ml:9.87},
+      tapajuntas:{nombre:'Tapajuntas',codigo:'TJ650O2',precio_ml:3.20},
+      junquillo:{nombre:'Junquillo',codigo:'JQ650O2',precio_ml:3.80},
+    }
+  },
+  ALBA_65_OB_RPT_1H: {
+    nombre:'ALBA 65 OB RPT 1H', tipo:'oscilobatiente', hojas:1, rpt:true, barraLongitud:6500,
+    descripcion:'Oscilobatiente 1 hoja RPT',
+    herrajes:100, epdm_ml:2.00,
+    perfiles:{
+      marco:{nombre:'RT650 Marco',codigo:'RT650OR',precio_ml:9.17},
+      hoja:{nombre:'RT651 Hoja',codigo:'RT651OR',precio_ml:9.87},
+      tapajuntas:{nombre:'Tapajuntas',codigo:'TJ650OR',precio_ml:3.20},
+      junquillo:{nombre:'Junquillo',codigo:'JQ650OR',precio_ml:3.80},
+    }
+  },
+  ALBA_65_OB_RPT_2H: {
+    nombre:'ALBA 65 OB RPT 2H', tipo:'oscilobatiente', hojas:2, rpt:true, barraLongitud:6500,
+    descripcion:'Oscilobatiente 2 hojas RPT',
+    herrajes:145, epdm_ml:2.00,
+    perfiles:{
+      marco:{nombre:'RT650 Marco',codigo:'RT650OR2',precio_ml:9.17},
+      hoja:{nombre:'RT651 Hoja',codigo:'RT651OR2',precio_ml:9.87},
+      tapajuntas:{nombre:'Tapajuntas',codigo:'TJ650OR2',precio_ml:3.20},
+      junquillo:{nombre:'Junquillo',codigo:'JQ650OR2',precio_ml:3.80},
+    }
+  },
+  ALFIL_OB_RPT: {
+    nombre:'ALFIL OB RPT', tipo:'oscilobatiente', hojas:1, rpt:true, barraLongitud:6500,
+    descripcion:'Oscilobatiente Alfil 1 hoja RPT',
+    herrajes:85, epdm_ml:2.00,
+    perfiles:{
+      marco:{nombre:'Marco Alfil 45',codigo:'MA45O',precio_ml:7.10},
+      hoja:{nombre:'Hoja Alfil 45',codigo:'HA45O',precio_ml:7.40},
+      tapajuntas:{nombre:'Tapajuntas Alfil',codigo:'TJA0',precio_ml:2.60},
+      junquillo:{nombre:'Junquillo Alfil',codigo:'JQAO',precio_ml:3.00},
+    }
+  },
+  // ── ELEVABLE ──
+  ELEVABLE_120_RPT: {
+    nombre:'ELEVABLE 120 RPT', tipo:'elevable', hojas:2, rpt:true, barraLongitud:6500,
+    descripcion:'Elevable 2 hojas RPT',
+    herrajes:220, epdm_ml:3.00,
+    perfiles:{
+      marco:{nombre:'RT120 Marco',codigo:'RT120',precio_ml:19.83},
+      hoja:{nombre:'RT124 Hoja',codigo:'RT124',precio_ml:13.67},
+      junquillo:{nombre:'Junquillo Elevable',codigo:'JQE',precio_ml:4.00},
+      guia_suelo:{nombre:'Carril Rodamiento',codigo:'GE',precio_ml:1.01},
+    }
+  },
+  // ── FIJO ──
+  FIJO_STD: {
+    nombre:'FIJO STD', tipo:'fijo', hojas:0, rpt:false, barraLongitud:6500,
+    descripcion:'Acristalamiento fijo estándar',
+    herrajes:15, epdm_ml:1.50,
+    perfiles:{
+      marco:{nombre:'Marco Fijo',codigo:'MF',precio_ml:5.09},
+      junquillo:{nombre:'Junquillo',codigo:'JQF',precio_ml:2.50},
+    }
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════
+// VIDRIOS
+// ═══════════════════════════════════════════════════════════════
+const VIDRIOS = {
+  // ── CÁMARA ESTÁNDAR (aire) ──
+  CAM_4_8_4:        {nombre:'Cámara 4+8+4 (básico)',          precio_m2:20.00},
+  CAM_4_12_4:       {nombre:'Cámara 4+12+4',                  precio_m2:28.00},
+  CAM_4_16_4:       {nombre:'Cámara 4+16+4',                  precio_m2:34.00},
+  CAM_6_12_4:       {nombre:'Cámara 6+12+4',                  precio_m2:36.00},
+  CAM_6_16_4:       {nombre:'Cámara 6+16+4',                  precio_m2:42.00},
+  CAM_6_16_6:       {nombre:'Cámara 6+16+6',                  precio_m2:50.00},
+  // ── CÁMARA BAJO EMISIVO ──
+  CAM_4_12_4_BE:    {nombre:'Cámara 4+12+4 Bajo Emisivo',     precio_m2:42.00},
+  CAM_4_16_4_BE:    {nombre:'Cámara 4+16+4 Bajo Emisivo',     precio_m2:48.00},
+  CAM_6_16_4_BE:    {nombre:'Cámara 6+16+4 Bajo Emisivo',     precio_m2:55.00},
+  CAM_6_16_6_BE:    {nombre:'Cámara 6+16+6 Bajo Emisivo',     precio_m2:62.00},
+  // ── CÁMARA ARGÓN ──
+  CAM_4_16_4_ARGON: {nombre:'Cámara 4+16+4 Argón',            precio_m2:52.66},
+  CAM_4_16_4_BE_ARGON:{nombre:'Cámara 4+16+4 BE + Argón',     precio_m2:58.00},
+  CAM_6_16_4_BE_ARGON:{nombre:'Cámara 6+16+4 BE + Argón',     precio_m2:65.00},
+  CAM_6_16_6_BE_ARGON:{nombre:'Cámara 6+16+6 BE + Argón',     precio_m2:72.00},
+  // ── CONTROL SOLAR ──
+  CAM_4_16_4_CS:    {nombre:'Cámara 4+16+4 Control Solar',    precio_m2:60.00},
+  CAM_6_16_4_CS:    {nombre:'Cámara 6+16+4 Control Solar',    precio_m2:68.00},
+  // ── LAMINADO (acústico) ──
+  LAM_33:           {nombre:'Laminado 33.1',                  precio_m2:45.00},
+  LAM_44:           {nombre:'Laminado 44.1',                  precio_m2:58.00},
+  LAM_55:           {nombre:'Laminado 55.2',                  precio_m2:72.00},
+  // ── LAMINADO + CÁMARA ──
+  CAM_LAM33_16_4_BE:{nombre:'Cámara Laminado 33.1+16+4 BE',   precio_m2:85.00},
+  CAM_LAM44_16_4_BE:{nombre:'Cámara Laminado 44.1+16+4 BE',   precio_m2:95.00},
+  // ── MONOLÍTICO ──
+  FLOAT_4:          {nombre:'Float 4mm',                      precio_m2:12.00},
+  TEMP_6:           {nombre:'Templado 6mm',                   precio_m2:45.00},
+  TEMP_8:           {nombre:'Templado 8mm',                   precio_m2:55.00},
+  TEMP_10:          {nombre:'Templado 10mm',                  precio_m2:65.00},
+};
+
+// ═══════════════════════════════════════════════════════════════
+// MONTAJE
+// ═══════════════════════════════════════════════════════════════
+const MONTAJE = {
+  sin_montaje:     {nombre:'Sin montaje',           precio_m2:0},
+  hueco_limpio:    {nombre:'Hueco limpio',          precio_m2:45},
+  con_albanileria: {nombre:'Con albañilería',       precio_m2:65},
+  reposicion:      {nombre:'Reposición completa',   precio_m2:80},
+};
+
+// ═══════════════════════════════════════════════════════════════
+// RECARGO POR COLOR (% sobre coste perfiles) — Tarifa M 2025
+// ═══════════════════════════════════════════════════════════════
+const COLORES = {
+  LB:        {nombre:'Lacado Blanco',              recargo:0},
+  LC:        {nombre:'Lacado Crema',               recargo:0.05},
+  LM:        {nombre:'Lacado Madera Nogal',        recargo:0.28},
+  LF:        {nombre:'Lacado Madera Roble Dorado', recargo:0.28},
+  BC:        {nombre:'Lacado Bronce Claro',        recargo:0.10},
+  BR:        {nombre:'Lacado Bronce',              recargo:0.12},
+  NEGROMATE: {nombre:'Lacado Negro Mate',          recargo:0.112},
+  '7016T':   {nombre:'Gris Antracita RAL 7016',   recargo:0.38},
+  '9005T':   {nombre:'Negro Profundo RAL 9005',    recargo:0.38},
+  '7022T':   {nombre:'Gris Umbra RAL 7022',        recargo:0.38},
+  '8019T':   {nombre:'Marrón Grisáceo RAL 8019',  recargo:0.38},
+  '9016T':   {nombre:'Blanco Puro RAL 9016',       recargo:0.10},
+  ANM:       {nombre:'Anodizado Natural Mate',     recargo:0.08},
+};
+
+// ═══════════════════════════════════════════════════════════════
+// MÁRGENES POR TIPO DE CLIENTE
+// ═══════════════════════════════════════════════════════════════
+const MARGENES = {
+  taller:      {label:'Taller / Instalador',    pct:15},
+  constructor: {label:'Constructor / Promotor', pct:20},
+  particular:  {label:'Particular',             pct:35},
+};
+
+// ═══════════════════════════════════════════════════════════════
+// CÁLCULO DE METRAJES
+// ═══════════════════════════════════════════════════════════════
+function calcularMetrajesComponentes(serie, ancho, alto) {
+  const s = TARIFA[serie];
+  const W = ancho / 1000; // metros
+  const H = alto / 1000;
+  const tipo = s.tipo;
+  const hojas = s.hojas;
+  const ml = {
+    marco_horizontal:0, marco_vertical:0,
+    hoja_horizontal:0, hoja_vertical:0,
+    junquillo:0, tapajuntas:0,
+    refuerzo_central:0, guia_suelo:0,
+  };
+
+  if (tipo === 'corredera') {
+    ml.marco_horizontal = W * 2;
+    ml.marco_vertical   = H * 2;
+    const hojaW = W / hojas - 0.030;
+    ml.hoja_horizontal  = Math.max(0, hojaW) * 2 * hojas;
+    ml.hoja_vertical    = H * 2 * hojas;
+    ml.junquillo        = Math.max(0, 2 * (Math.max(0,hojaW-0.020) + Math.max(0,H-0.020)) * hojas);
+    ml.refuerzo_central = H * (hojas - 1);
+    ml.guia_suelo       = W;
+  } else if (tipo === 'practicable' || tipo === 'oscilobatiente' || tipo === 'puerta') {
+    ml.marco_horizontal = W * 2;
+    ml.marco_vertical   = H * 2;
+    if (hojas === 1) {
+      ml.hoja_horizontal = Math.max(0, W - 0.040) * 2;
+      ml.hoja_vertical   = Math.max(0, H - 0.040) * 2;
+      ml.junquillo       = Math.max(0, 2 * (Math.max(0,W-0.070) + Math.max(0,H-0.070)));
+    } else {
+      const hojaW = W / 2 - 0.020;
+      ml.hoja_horizontal = Math.max(0, hojaW) * 2 * 2;
+      ml.hoja_vertical   = Math.max(0, H - 0.040) * 2 * 2;
+      ml.junquillo       = Math.max(0, 2 * (Math.max(0,hojaW-0.025) + Math.max(0,H-0.070)) * 2);
+    }
+    ml.tapajuntas = W * 2 + H * 2;
+  } else if (tipo === 'elevable') {
+    ml.marco_horizontal = W * 2;
+    ml.marco_vertical   = H * 2;
+    const hojaW = W / 2 - 0.030;
+    ml.hoja_horizontal  = Math.max(0, hojaW) * 2 * 2;
+    ml.hoja_vertical    = H * 2 * 2;
+    ml.junquillo        = Math.max(0, 2 * (Math.max(0,hojaW-0.020) + Math.max(0,H-0.020)) * 2);
+    ml.guia_suelo       = W;
+  } else if (tipo === 'fijo') {
+    ml.marco_horizontal = W * 2;
+    ml.marco_vertical   = H * 2;
+    ml.junquillo        = Math.max(0, 2 * (Math.max(0,W-0.050) + Math.max(0,H-0.050)));
+  }
+
+  for (const k in ml) ml[k] = Math.max(0, ml[k]);
+  return ml;
+}
+
+const COMP_TO_KEY = {
+  marco_horizontal:'marco', marco_vertical:'marco',
+  hoja_horizontal:'hoja',   hoja_vertical:'hoja',
+  junquillo:'junquillo',    tapajuntas:'tapajuntas',
+  refuerzo_central:'refuerzo_central', guia_suelo:'guia_suelo',
+};
+
+// Coste real de perfiles: agrupa por tipo de perfil y redondea a barras completas
+function calcularCostesPerfilesBarra(serie, ml, uds) {
+  const s = TARIFA[serie];
+  const barLen = s.barraLongitud / 1000; // 6500mm → 6.5m
+  // Acumular ml totales por clave de perfil (todas las uds juntas)
+  const mlPorPerfil = {};
+  for (const [comp, metros] of Object.entries(ml)) {
+    const pk = COMP_TO_KEY[comp];
+    if (pk && s.perfiles[pk] && metros > 0)
+      mlPorPerfil[pk] = (mlPorPerfil[pk]||0) + metros * uds;
+  }
+  let total = 0;
+  for (const [pk, totalMl] of Object.entries(mlPorPerfil)) {
+    const nBarras = Math.ceil(totalMl / barLen);
+    total += nBarras * barLen * s.perfiles[pk].precio_ml;
+  }
+  return total;
+}
+
+// Coste por ml reales (para fabricación/mano de obra — se paga el trabajo real)
+function calcularCostesPerfiles(serie, ml) {
+  const s = TARIFA[serie];
+  let total = 0;
+  for (const [comp, metros] of Object.entries(ml)) {
+    const pk = COMP_TO_KEY[comp];
+    if (pk && s.perfiles[pk] && metros > 0) total += metros * s.perfiles[pk].precio_ml;
+  }
+  return total;
+}
+
+function calcularCostesFabricacion(serie, ml) {
+  return calcularCostesPerfiles(serie, ml); // labor = ml reales trabajados
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CÁLCULO COMPLETO POR POSICIÓN
+// ═══════════════════════════════════════════════════════════════
+function calcularPosicion(pos, margenPct) {
+  const { serie, ancho, alto, uds, vidrio, montaje, color='LB' } = pos;
+  const s = TARIFA[serie];
+  const W = ancho / 1000, H = alto / 1000;
+  const area = W * H;
+
+  const ml = calcularMetrajesComponentes(serie, ancho, alto);
+
+  // Costes material — perfiles facturados por barras completas de 6.5m
+  const colorRecargo      = (COLORES[color]?.recargo || 0);
+  const costePerfilesMl   = calcularCostesPerfiles(serie, ml) * (1 + colorRecargo);          // ml reales (para display)
+  const costePerfilesBruto= calcularCostesPerfilesBarra(serie, ml, uds) * (1 + colorRecargo); // barras completas (facturado)
+  const costeVidrio       = area * VIDRIOS[vidrio].precio_m2;
+  const perimetro         = 2 * (W + H);
+  const costeEPDM         = perimetro * s.epdm_ml;
+  const herrajes          = s.herrajes;
+  // costeMaterial ya incluye ajuste por barras (perfilesBruto / uds para tener base unitaria)
+  const costePerfilesUd   = costePerfilesBruto / uds; // amortizado por ud
+  const costeMaterial     = costePerfilesUd + costeVidrio + costeEPDM + herrajes;
+
+  // Fabricación — se paga por ml reales trabajados
+  const fabricacion       = calcularCostesFabricacion(serie, ml);
+
+  // Coste base por unidad
+  const costeBaseUd       = costeMaterial + fabricacion;
+
+  // Beneficio
+  const beneficioUd       = costeBaseUd * margenPct / 100;
+
+  // Precio venta unidad (sin montaje)
+  const precioVentaUd     = costeBaseUd + beneficioUd;
+
+  // Montaje
+  const montajeUd         = area * MONTAJE[montaje].precio_m2;
+  const montajeTotal      = montajeUd * uds;
+
+  // Precio total posición (barras ya incluidas; precio manual lo sobreescribe si está activo)
+  const precioTotal       = pos.precioManual > 0 ? pos.precioManual : (precioVentaUd * uds + montajeTotal);
+
+  // Info de barras para display
+  const barLen = s.barraLongitud / 1000;
+  const nBarrasTotales = Object.entries(ml).reduce((acc,[comp,metros])=>{
+    const pk = COMP_TO_KEY[comp];
+    if (pk && s.perfiles[pk] && metros>0) acc += Math.ceil(metros*uds/barLen);
+    return acc;
+  }, 0);
+
+  return {
+    ml, area,
+    costePerfiles: costePerfilesUd, costePerfilesMl, costePerfilesBruto, nBarrasTotales,
+    costeVidrio, costeEPDM, herrajes,
+    costeMaterial, fabricacion, costeBaseUd,
+    beneficioUd, precioVentaUd,
+    montajeUd, montajeTotal, precioTotal,
+    uds, margenPct, colorRecargo,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FFD BAR OPTIMIZATION
+// ═══════════════════════════════════════════════════════════════
+function optimizarBarras(cortes_mm, barLenMm = 6500) {
+  const sorted = [...cortes_mm].sort((a,b)=>b-a);
+  const barras = [];
+  for (const corte of sorted) {
+    if (corte <= 0) continue;
+    let placed = false;
+    for (const bar of barras) {
+      if (bar.restante >= corte) {
+        bar.cortes.push(corte);
+        bar.restante -= corte;
+        placed = true; break;
+      }
+    }
+    if (!placed) barras.push({cortes:[corte], restante: barLenMm - corte});
+  }
+  return barras;
+}
+
+function generarCortesPosicion(pos) {
+  const { serie, ancho, alto, uds } = pos;
+  const s = TARIFA[serie];
+  const aW = Math.round(ancho), aH = Math.round(alto);
+  const tipo = s.tipo, hojas = s.hojas;
+  const cuts = {};
+
+  const addCuts = (perfil, lengths) => {
+    if (!s.perfiles[perfil]) return;
+    if (!cuts[perfil]) cuts[perfil] = [];
+    for (let u=0; u<uds; u++) cuts[perfil].push(...lengths);
+  };
+
+  // Marco siempre
+  addCuts('marco', [aW, aW, aH, aH]);
+
+  if (tipo === 'corredera') {
+    const hojaW = Math.max(0, Math.round(aW/hojas - 30));
+    for (let h=0; h<hojas; h++) addCuts('hoja', [hojaW, hojaW, aH, aH]);
+    addCuts('refuerzo_central', Array(hojas-1).fill(aH));
+    addCuts('guia_suelo', [aW]);
+    addCuts('junquillo', [Math.max(0,hojaW-20), Math.max(0,hojaW-20), Math.max(0,aH-20), Math.max(0,aH-20)].flatMap(v=>Array(hojas).fill(v)));
+  } else if (['practicable','oscilobatiente','puerta'].includes(tipo)) {
+    if (hojas===1) {
+      const hW=Math.max(0,aW-40), hH=Math.max(0,aH-40);
+      addCuts('hoja', [hW,hW,hH,hH]);
+      addCuts('tapajuntas', [aW,aW,aH,aH]);
+      addCuts('junquillo', [Math.max(0,aW-70),Math.max(0,aH-70)]);
+    } else {
+      const hW=Math.max(0,Math.round(aW/2-20)), hH=Math.max(0,aH-40);
+      addCuts('hoja', [hW,hW,hH,hH,hW,hW,hH,hH]);
+      addCuts('tapajuntas', [aW,aW,aH,aH]);
+    }
+  } else if (tipo==='elevable') {
+    const hojaW=Math.max(0,Math.round(aW/2-30));
+    addCuts('hoja', [hojaW,hojaW,aH,aH,hojaW,hojaW,aH,aH]);
+    addCuts('guia_suelo', [aW]);
+  } else if (tipo==='fijo') {
+    addCuts('junquillo', [Math.max(0,aW-50),Math.max(0,aW-50),Math.max(0,aH-50),Math.max(0,aH-50)]);
+  }
+
+  return cuts; // {perfil: [mm,...]}
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let posiciones = [];
+let conceptos = [];
+let clienteTipo = 'particular';
+let lastResult = null;
+let posIdCounter = 0;
+
+// ═══════════════════════════════════════════════════════════════
+// UI — POSICIONES
+// ═══════════════════════════════════════════════════════════════
+const SERIE_KEYS = Object.keys(TARIFA);
+const VIDRIO_KEYS = Object.keys(VIDRIOS);
+const MONTAJE_KEYS = Object.keys(MONTAJE);
+
+function serieOptions(selected='ALBA_PROS_70_RPT') {
+  const groups = {
+    'CORREDERAS':  SERIE_KEYS.filter(k=>TARIFA[k].tipo==='corredera'),
+    'PRACTICABLES':SERIE_KEYS.filter(k=>TARIFA[k].tipo==='practicable'),
+    'PUERTAS':     SERIE_KEYS.filter(k=>TARIFA[k].tipo==='puerta'),
+    'OSCILOBATIENTE':SERIE_KEYS.filter(k=>TARIFA[k].tipo==='oscilobatiente'),
+    'ELEVABLE':    SERIE_KEYS.filter(k=>TARIFA[k].tipo==='elevable'),
+    'FIJO':        SERIE_KEYS.filter(k=>TARIFA[k].tipo==='fijo'),
+  };
+  return Object.entries(groups).map(([g,ks])=>`<optgroup label="${g}">${ks.map(k=>`<option value="${k}"${k===selected?' selected':''}>${TARIFA[k].nombre}</option>`).join('')}</optgroup>`).join('');
+}
+
+function vidrioOptions(selected='CAM_4_16_4_BE') {
+  return VIDRIO_KEYS.map(k=>`<option value="${k}"${k===selected?' selected':''}>${VIDRIOS[k].nombre} (${VIDRIOS[k].precio_m2.toFixed(2)}€/m²)</option>`).join('');
+}
+
+function montajeOptions(selected='sin_montaje') {
+  return MONTAJE_KEYS.map(k=>`<option value="${k}"${k===selected?' selected':''}>${MONTAJE[k].nombre} (${MONTAJE[k].precio_m2}€/m²)</option>`).join('');
+}
+
+function colorOptions(selected='LB') {
+  return Object.keys(COLORES).map(k=>`<option value="${k}"${k===selected?' selected':''}>${COLORES[k].nombre}${COLORES[k].recargo>0?' (+'+Math.round(COLORES[k].recargo*100)+'%)':''}</option>`).join('');
+}
+
+function addPosicion() {
+  const id = ++posIdCounter;
+  posiciones.push({id, descripcion:'', serie:'ALBA_PROS_70_RPT', ancho:1200, alto:1200, uds:1, vidrio:'CAM_4_16_4_BE', montaje:'sin_montaje', color:'LB'});
+  renderPosiciones();
+}
+
+function removePosicion(id) {
+  posiciones = posiciones.filter(p=>p.id!==id);
+  renderPosiciones();
+}
+
+function renderPosiciones() {
+  const c = document.getElementById('posiciones-container');
+  if (!posiciones.length) {
+    c.innerHTML = '<p style="color:var(--gray);text-align:center;padding:20px">No hay posiciones. Haz clic en "+ Añadir posición".</p>';
+    return;
+  }
+  c.innerHTML = posiciones.map((p,i) => `
+<div class="position-row" id="pos-${p.id}">
+  <div class="position-header">
+    <div class="pos-num">${i+1}</div>
+    <input type="text" value="${escHtml(p.descripcion)}" placeholder="Descripción de la posición"
+      style="flex:1;font-weight:500" onchange="updatePos(${p.id},'descripcion',this.value)">
+    <button class="btn-remove" onclick="removePosicion(${p.id})" title="Eliminar"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="position-grid">
+    <div>
+      <label>Serie (TARIFA)</label>
+      <select onchange="updatePos(${p.id},'serie',this.value)">${serieOptions(p.serie)}</select>
+    </div>
+    <div>
+      <label>Tipo vidrio</label>
+      <select onchange="updatePos(${p.id},'vidrio',this.value)">${vidrioOptions(p.vidrio)}</select>
+    </div>
+    <div>
+      <label>Ancho (mm)</label>
+      <input type="number" value="${p.ancho}" min="100" max="6000" onchange="updatePos(${p.id},'ancho',+this.value)">
+    </div>
+    <div>
+      <label>Alto (mm)</label>
+      <input type="number" value="${p.alto}" min="100" max="3000" onchange="updatePos(${p.id},'alto',+this.value)">
+    </div>
+    <div>
+      <label>Uds.</label>
+      <input type="number" value="${p.uds}" min="1" max="999" onchange="updatePos(${p.id},'uds',+this.value)">
+    </div>
+    <div>
+      <label>Montaje</label>
+      <select onchange="updatePos(${p.id},'montaje',this.value)">${montajeOptions(p.montaje)}</select>
+    </div>
+    <div>
+      <label>Color / Acabado</label>
+      <select onchange="updatePos(${p.id},'color',this.value)">${colorOptions(p.color||'LB')}</select>
+    </div>
+    <div style="display:flex;align-items:flex-end">
+      <span style="font-size:11px;color:var(--gray)">
+        ${TARIFA[p.serie].tipo.toUpperCase()} ${TARIFA[p.serie].rpt?'<span style="color:var(--green)">RPT</span>':''}<br>
+        ${(p.ancho/1000).toFixed(2)}m × ${(p.alto/1000).toFixed(2)}m = ${((p.ancho/1000)*(p.alto/1000)).toFixed(2)}m²
+      </span>
+    </div>
+  </div>
+</div>`).join('');
+}
+
+function updatePos(id, field, val) {
+  const p = posiciones.find(x=>x.id===id);
+  if (p) p[field] = val;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UI — CONCEPTOS
+// ═══════════════════════════════════════════════════════════════
+let concIdCounter = 0;
+
+function addConcepto() {
+  conceptos.push({id:++concIdCounter, descripcion:'', cantidad:1, precio:0});
+  renderConceptos();
+}
+
+function removeConcepto(id) {
+  conceptos = conceptos.filter(c=>c.id!==id);
+  renderConceptos();
+  updateBadgeOtros();
+}
+
+function renderConceptos() {
+  const c = document.getElementById('conceptos-container');
+  if (!conceptos.length) { c.innerHTML=''; return; }
+  c.innerHTML = conceptos.map(co=>`
+<div class="concepto-row">
+  <input type="text" value="${escHtml(co.descripcion)}" placeholder="Descripción" onchange="updateConc(${co.id},'descripcion',this.value)">
+  <input type="number" value="${co.cantidad}" min="0" step="0.01" onchange="updateConc(${co.id},'cantidad',+this.value);updateTotalConc(${co.id})">
+  <input type="number" value="${co.precio}" min="0" step="0.01" onchange="updateConc(${co.id},'precio',+this.value);updateTotalConc(${co.id})" placeholder="€">
+  <input type="number" value="${(co.cantidad*co.precio).toFixed(2)}" readonly style="background:#f8fafc;font-weight:600">
+  <button class="btn-remove" onclick="removeConcepto(${co.id})"><i class="fas fa-times"></i></button>
+</div>`).join('');
+}
+
+function updateConc(id, f, v) {
+  const c = conceptos.find(x=>x.id===id);
+  if (c) c[f]=v;
+  updateBadgeOtros();
+}
+
+function updateTotalConc(id) { renderConceptos(); updateBadgeOtros(); }
+
+function updateBadgeOtros() {
+  const total = conceptos.reduce((a,c)=>a+c.cantidad*c.precio,0);
+  document.getElementById('badge-otros').textContent = fmt(total)+' €';
+}
+
+function updateClienteTipo() {
+  const r = document.querySelector('input[name="clienteTipo"]:checked');
+  if (r) clienteTipo = r.value;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN CALCULATION
+// ═══════════════════════════════════════════════════════════════
+function calcularPresupuesto() {
+  if (!posiciones.length) { toast('Añade al menos una posición'); return; }
+
+  const margen = MARGENES[clienteTipo].pct;
+  const resultPos = posiciones.map(p => ({pos:p, calc: calcularPosicion(p, margen)}));
+  const otrosTotal = conceptos.reduce((a,c)=>a+c.cantidad*c.precio, 0);
+
+  // Totales globales
+  let sumMaterial=0, sumVidrio=0, sumFabricacion=0, sumBeneficio=0, sumMontaje=0, sumTotal=0;
+  for (const {calc} of resultPos) {
+    sumMaterial   += calc.costeMaterial * calc.uds;
+    sumVidrio     += calc.costeVidrio   * calc.uds;
+    sumFabricacion+= calc.fabricacion   * calc.uds;
+    sumBeneficio  += calc.beneficioUd   * calc.uds;
+    sumMontaje    += calc.montajeTotal;
+    sumTotal      += calc.precioTotal;
+  }
+  const subtotalPos = sumTotal; // usa precioTotal de cada posición (respeta precio manual)
+  const baseImponible = subtotalPos + otrosTotal;
+  const iva = baseImponible * 0.21;
+  const totalCliente = baseImponible + iva;
+
+  lastResult = {resultPos, otrosTotal, sumMaterial, sumVidrio, sumFabricacion, sumBeneficio, sumMontaje,
+    subtotalPos, baseImponible, iva, totalCliente, margen, clienteTipo};
+
+  renderTab0(resultPos, margen);
+  renderTab1(resultPos);
+  renderTab2(resultPos);
+  renderTab3(lastResult);
+
+  document.getElementById('resultados-card').style.display='block';
+  document.getElementById('resultados-card').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TAB 0 — DESGLOSE POSICIONES
+// ═══════════════════════════════════════════════════════════════
+const COLORS_SEGMENT = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#84cc16','#f97316'];
+
+function renderTab0(resultPos, margen) {
+  const panel = document.getElementById('tab0');
+  let html = '';
+
+  resultPos.forEach(({pos, calc}, i) => {
+    const s = TARIFA[pos.serie];
+    const tipoBadge = `<span class="badge-tipo">${s.tipo.toUpperCase()}${s.rpt?' RPT':''} ${s.hojas>0?s.hojas+'H':''}</span>`;
+    const area = calc.area;
+
+    // 6 desglose cards
+    html += `
+<div class="accordion">
+  <div class="accordion-header" onclick="toggleAcc(${i})">
+    <div class="pos-num">${i+1}</div>
+    ${tipoBadge}
+    <span style="font-weight:600;flex:1">${escHtml(pos.descripcion)||s.nombre} — ${pos.ancho}×${pos.alto}mm × ${pos.uds}ud${pos.color&&pos.color!=='LB'?' · <span style="color:var(--gold)">'+COLORES[pos.color]?.nombre+'</span>':''}</span>
+    <span style="font-weight:700;color:var(--blue);font-size:15px">${fmt(calc.precioTotal)} €</span>
+    <i class="fas fa-chevron-down" style="margin-left:8px;color:var(--gray)"></i>
+  </div>
+  <div class="accordion-body" id="acc-${i}">
+    <div class="desglose-grid">
+      <div class="d-card">
+        <div class="d-card-title"><i class="fas fa-border-all"></i> Marco</div>
+        <div class="d-card-val">${fmt(calcPerfilGrupo(pos.serie,calc.ml,'marco',pos.uds,pos.color||'LB'))} €</div>
+        <div class="d-card-sub">${nBarrasGrupo(pos.serie,calc.ml,'marco',pos.uds)} barras × 6.5m · H: ${fmt(calc.ml.marco_horizontal)}ml + V: ${fmt(calc.ml.marco_vertical)}ml</div>
+      </div>
+      <div class="d-card">
+        <div class="d-card-title"><i class="fas fa-th-large"></i> Hoja ×${s.hojas}</div>
+        <div class="d-card-val">${fmt(calcPerfilGrupo(pos.serie,calc.ml,'hoja',pos.uds,pos.color||'LB'))} €</div>
+        <div class="d-card-sub">${nBarrasGrupo(pos.serie,calc.ml,'hoja',pos.uds)} barras × 6.5m · H: ${fmt(calc.ml.hoja_horizontal)}ml + V: ${fmt(calc.ml.hoja_vertical)}ml</div>
+      </div>
+      <div class="d-card">
+        <div class="d-card-title"><i class="fas fa-minus"></i> Junquillo / Otros</div>
+        <div class="d-card-val">${fmt(calcPerfilesMenores(pos.serie,calc.ml,pos.uds,pos.color||'LB'))} €</div>
+        <div class="d-card-sub">Junq: ${fmt(calc.ml.junquillo)}ml | Tap: ${fmt(calc.ml.tapajuntas)}ml | Ref: ${fmt(calc.ml.refuerzo_central)}ml</div>
+      </div>
+      <div class="d-card blue">
+        <div class="d-card-title"><i class="fas fa-vector-square"></i> Vidrio</div>
+        <div class="d-card-val blue">${fmt(calc.costeVidrio)} €</div>
+        <div class="d-card-sub">${VIDRIOS[pos.vidrio].nombre} · ${calc.area.toFixed(2)}m²</div>
+      </div>
+      <div class="d-card">
+        <div class="d-card-title"><i class="fas fa-ring"></i> Juntas EPDM</div>
+        <div class="d-card-val">${fmt(calc.costeEPDM)} €</div>
+        <div class="d-card-sub">Sellado + burletes</div>
+      </div>
+      <div class="d-card">
+        <div class="d-card-title"><i class="fas fa-tools"></i> Herrajes</div>
+        <div class="d-card-val">${fmt(s.herrajes)} €</div>
+        <div class="d-card-sub">Cremona, bisagras, manilla</div>
+      </div>
+      <div class="d-card green">
+        <div class="d-card-title"><i class="fas fa-industry"></i> Fabricación</div>
+        <div class="d-card-val green">${fmt(calc.fabricacion)} €</div>
+        <div class="d-card-sub">Mano de obra fabricación</div>
+      </div>
+    </div>
+    <table class="sum-table">
+      <tr><td>Perfiles + EPDM + herrajes (ud)${calc.colorRecargo>0?' <span style=\'color:var(--gold);font-size:11px\'> · '+COLORES[pos.color||'LB']?.nombre+' +'+Math.round(calc.colorRecargo*100)+'%</span>':''}</td><td>${fmt(calc.costePerfiles + calc.costeEPDM + calc.herrajes)} €</td></tr>
+      <tr><td style="color:var(--blue)">+ Vidrio — ${VIDRIOS[pos.vidrio].nombre} (ud)</td><td style="color:var(--blue)">${fmt(calc.costeVidrio)} €</td></tr>
+      <tr><td style="font-weight:600">= Coste material (ud)</td><td style="font-weight:600">${fmt(calc.costeMaterial)} €</td></tr>
+      <tr><td style="color:var(--green)">+ Fabricación (ud)</td><td style="color:var(--green)">${fmt(calc.fabricacion)} €</td></tr>
+      <tr><td style="font-weight:700">= Coste base (ud)</td><td style="font-weight:700">${fmt(calc.costeBaseUd)} €</td></tr>
+      <tr class="beneficio"><td>+ Beneficio ${margen}%</td><td>${fmt(calc.beneficioUd)} €</td></tr>
+      <tr><td style="font-weight:600">Precio venta ud (sin montaje)</td><td style="font-weight:600">${fmt(calc.precioVentaUd)} €</td></tr>
+      <tr class="montaje"><td>× ${pos.uds} ud + Montaje (${MONTAJE[pos.montaje].nombre})</td><td style="color:var(--green)">${fmt(calc.montajeTotal)} €</td></tr>
+      <tr class="total"><td>PRECIO TOTAL POSICIÓN</td><td>${fmt(calc.precioTotal)} €</td></tr>
+    </table>
+    <div style="margin-top:10px;display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px dashed var(--border)">
+      <label style="font-size:12px;font-weight:600;color:var(--gray);white-space:nowrap;margin:0">Precio manual (total posición):</label>
+      <input type="number" min="0" step="0.01" placeholder="Dejar vacío = precio calculado"
+        value="${pos.precioManual||''}"
+        style="width:180px;padding:5px 8px;border:2px solid ${pos.precioManual?'var(--gold)':'var(--border)'};border-radius:6px;font-size:13px"
+        onchange="updatePos(${pos.id},'precioManual',this.value?+this.value:null);calcularPresupuesto()">
+      ${pos.precioManual?'<span style="font-size:11px;color:var(--gold);font-weight:600">⚠ Precio manual activo</span>':''}
+    </div>
+  </div>
+</div>`;
+  });
+
+  panel.innerHTML = html || '<p style="color:var(--gray);padding:20px">Sin posiciones</p>';
+}
+
+function calcPerfilGrupo(serie, ml, grupo, uds, colorKey='LB') {
+  const s = TARIFA[serie];
+  if (!s.perfiles[grupo]) return 0;
+  const pm = s.perfiles[grupo].precio_ml;
+  const barLen = s.barraLongitud / 1000;
+  const recargo = COLORES[colorKey]?.recargo || 0;
+  let mlTotal = 0;
+  if (grupo==='marco') mlTotal = (ml.marco_horizontal + ml.marco_vertical) * (uds||1);
+  else if (grupo==='hoja') mlTotal = (ml.hoja_horizontal + ml.hoja_vertical) * (uds||1);
+  const nBarras = Math.ceil(mlTotal / barLen);
+  return nBarras * barLen * pm * (1 + recargo);
+}
+
+function calcPerfilesMenores(serie, ml, uds, colorKey='LB') {
+  const s = TARIFA[serie];
+  const barLen = s.barraLongitud / 1000;
+  const recargo = COLORES[colorKey]?.recargo || 0;
+  let total = 0;
+  const menores = ['junquillo','tapajuntas','refuerzo_central','guia_suelo'];
+  for (const k of menores) {
+    if (s.perfiles[k] && ml[k]>0) {
+      const mlT = ml[k] * (uds||1);
+      total += Math.ceil(mlT / barLen) * barLen * s.perfiles[k].precio_ml;
+    }
+  }
+  return total * (1 + recargo);
+}
+
+function nBarrasGrupo(serie, ml, grupo, uds) {
+  const s = TARIFA[serie];
+  const barLen = s.barraLongitud / 1000;
+  let mlTotal = 0;
+  if (grupo==='marco') mlTotal = (ml.marco_horizontal + ml.marco_vertical) * (uds||1);
+  else if (grupo==='hoja') mlTotal = (ml.hoja_horizontal + ml.hoja_vertical) * (uds||1);
+  return mlTotal > 0 ? Math.ceil(mlTotal / barLen) : 0;
+}
+
+function toggleAcc(i) {
+  const b = document.getElementById('acc-'+i);
+  b.classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TAB 1 — OPTIMIZACIÓN DE BARRAS
+// ═══════════════════════════════════════════════════════════════
+function renderTab1(resultPos) {
+  const panel = document.getElementById('tab1');
+
+  // Aggregate cuts per serie+perfil
+  const allCuts = {}; // key: "serie||perfil" -> {serie, perfil, cortes:[mm]}
+
+  for (const {pos} of resultPos) {
+    const cuts = generarCortesPosicion(pos);
+    for (const [perfil, cortes] of Object.entries(cuts)) {
+      const k = `${pos.serie}||${perfil}`;
+      if (!allCuts[k]) allCuts[k] = {serie:pos.serie, perfil, cortes:[]};
+      allCuts[k].cortes.push(...cortes);
+    }
+  }
+
+  if (!Object.keys(allCuts).length) { panel.innerHTML='<p style="color:var(--gray)">Sin datos</p>'; return; }
+
+  let html = '<div>';
+  const segColors = COLORS_SEGMENT;
+
+  for (const [k, g] of Object.entries(allCuts)) {
+    const s = TARIFA[g.serie];
+    const p = s.perfiles[g.perfil];
+    if (!p) continue;
+    const barras = optimizarBarras(g.cortes);
+    const usedMm = g.cortes.reduce((a,b)=>a+b,0);
+    const totalMm = barras.length * 6500;
+    const wasteMm = totalMm - usedMm;
+    const pctUso = totalMm>0 ? (usedMm/totalMm*100).toFixed(1) : 0;
+
+    html += `<div class="bar-wrap">
+      <div class="bar-label">${s.nombre} — ${p.nombre} (${g.cortes.length} cortes, ${barras.length} barra${barras.length!==1?'s':''})</div>`;
+
+    for (let bi=0; bi<barras.length; bi++) {
+      const bar = barras[bi];
+      const usedInBar = bar.cortes.reduce((a,b)=>a+b,0);
+      let segsHtml = '';
+      bar.cortes.forEach((c,ci) => {
+        const pct = (c/6500*100).toFixed(2);
+        const col = segColors[ci%segColors.length];
+        segsHtml += `<div class="bar-segment" style="width:${pct}%;background:${col}" title="${c}mm">${c>200?c+'mm':''}</div>`;
+      });
+      const wastePct = (bar.restante/6500*100).toFixed(2);
+      if (bar.restante>0) segsHtml += `<div class="bar-waste" style="width:${wastePct}%" title="Retal ${bar.restante}mm"></div>`;
+      html += `<div style="margin-bottom:4px">
+        <div class="bar-visual">${segsHtml}</div>
+        <div class="bar-info">Barra ${bi+1}: ${usedInBar}mm útil | ${bar.restante}mm retal</div>
+      </div>`;
+    }
+
+    html += `<div class="bar-info" style="margin-bottom:16px">
+      Total usado: ${usedMm}mm | Total barras: ${totalMm}mm | Desperdicio: ${wasteMm}mm (${(100-parseFloat(pctUso)).toFixed(1)}%) | Uso: <strong>${pctUso}%</strong>
+    </div></div>`;
+  }
+
+  panel.innerHTML = html + '</div>';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TAB 2 — LISTA DE COMPRA
+// ═══════════════════════════════════════════════════════════════
+function renderTab2(resultPos) {
+  const panel = document.getElementById('tab2');
+  const allCuts = {};
+
+  for (const {pos} of resultPos) {
+    const cuts = generarCortesPosicion(pos);
+    for (const [perfil, cortes] of Object.entries(cuts)) {
+      const k = `${pos.serie}||${perfil}`;
+      if (!allCuts[k]) allCuts[k] = {serie:pos.serie, perfil, cortes:[]};
+      allCuts[k].cortes.push(...cortes);
+    }
+  }
+
+  let html = `<table class="compra-table">
+    <thead><tr>
+      <th>Serie</th><th>Perfil</th><th>Código</th>
+      <th style="text-align:right">ML necesarios</th>
+      <th style="text-align:right">Barras necesarias</th>
+      <th style="text-align:right">Precio/barra</th>
+      <th style="text-align:right">Coste €</th>
+    </tr></thead><tbody>`;
+
+  let totalCompra = 0;
+
+  for (const [k,g] of Object.entries(allCuts)) {
+    const s = TARIFA[g.serie];
+    const p = s.perfiles[g.perfil];
+    if (!p) continue;
+    const barras = optimizarBarras(g.cortes);
+    const mlNecesarios = g.cortes.reduce((a,b)=>a+b,0)/1000;
+    const nBarras = barras.length;
+    const precioBarra = p.precio_ml * 6.5;
+    const coste = nBarras * precioBarra;
+    totalCompra += coste;
+    html += `<tr>
+      <td>${s.nombre}</td>
+      <td>${p.nombre}</td>
+      <td style="font-family:monospace;font-size:12px">${p.codigo}</td>
+      <td style="text-align:right">${mlNecesarios.toFixed(2)} m</td>
+      <td style="text-align:right">${nBarras}</td>
+      <td style="text-align:right">${fmt(precioBarra)} €</td>
+      <td style="text-align:right">${fmt(coste)} €</td>
+    </tr>`;
+  }
+
+  html += `</tbody><tfoot><tr style="background:var(--blue);color:#fff;font-weight:700">
+    <td colspan="6">TOTAL COMPRA PERFILES</td>
+    <td style="text-align:right">${fmt(totalCompra)} €</td>
+  </tr></tfoot></table>`;
+
+  // Vidrios
+  const vidMap = {};
+  for (const {pos,calc} of resultPos) {
+    if (!vidMap[pos.vidrio]) vidMap[pos.vidrio]={area:0};
+    vidMap[pos.vidrio].area += calc.area * pos.uds;
+  }
+  html += '<br><table class="compra-table"><thead><tr><th>Vidrio</th><th style="text-align:right">m² total</th><th style="text-align:right">Precio/m²</th><th style="text-align:right">Coste</th></tr></thead><tbody>';
+  let totalVidrio=0;
+  for (const [vk,vv] of Object.entries(vidMap)) {
+    const v = VIDRIOS[vk];
+    const c = vv.area*v.precio_m2;
+    totalVidrio+=c;
+    html+=`<tr><td>${v.nombre}</td><td style="text-align:right">${vv.area.toFixed(2)}</td><td style="text-align:right">${v.precio_m2.toFixed(2)} €</td><td style="text-align:right">${fmt(c)} €</td></tr>`;
+  }
+  html+=`</tbody><tfoot><tr style="background:var(--blue);color:#fff;font-weight:700"><td colspan="3">TOTAL VIDRIO</td><td style="text-align:right">${fmt(totalVidrio)} €</td></tr></tfoot></table>`;
+
+  panel.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TAB 3 — RESUMEN ECONÓMICO
+// ═══════════════════════════════════════════════════════════════
+function renderTab3(r) {
+  const panel = document.getElementById('tab3');
+  const {sumMaterial,sumVidrio,sumFabricacion,sumBeneficio,sumMontaje,subtotalPos,otrosTotal,baseImponible,iva,totalCliente,margen,clienteTipo} = r;
+  const sumPerfilesEtc = sumMaterial - (sumVidrio||0);
+  const costeBase = sumMaterial + sumFabricacion;
+
+  let html = `<table class="eco-table">
+    <tr><td colspan="2" class="eco-section">COSTES DE PRODUCCIÓN</td></tr>
+    <tr><td>Perfiles + EPDM + herrajes</td><td>${fmt(sumPerfilesEtc)} €</td></tr>
+    <tr><td style="color:var(--blue)">Vidrios (acristalamiento)</td><td style="color:var(--blue)">${fmt(sumVidrio||0)} €</td></tr>
+    <tr><td style="font-weight:600">= Total material</td><td style="font-weight:600">${fmt(sumMaterial)} €</td></tr>
+    <tr><td style="color:var(--green)">Total fabricación</td><td style="color:var(--green)">${fmt(sumFabricacion)} €</td></tr>
+    <tr><td>Total montaje</td><td>${fmt(sumMontaje)} €</td></tr>
+    <tr class="eco-subtotal"><td style="font-weight:700">COSTE BASE</td><td>${fmt(costeBase + sumMontaje)} €</td></tr>
+
+    <tr><td colspan="2" class="eco-section">MARGEN COMERCIAL</td></tr>
+    <tr class="eco-beneficio"><td>Beneficio ${margen}% (${MARGENES[clienteTipo].label})</td><td>${fmt(sumBeneficio)} €</td></tr>
+
+    <tr><td colspan="2" class="eco-section">TOTALES</td></tr>
+    <tr class="eco-subtotal"><td style="font-weight:700">Subtotal posiciones</td><td>${fmt(subtotalPos)} €</td></tr>`;
+
+  if (otrosTotal>0) {
+    html+=`<tr class="eco-otros"><td>Otros conceptos</td><td>${fmt(otrosTotal)} €</td></tr>`;
+  }
+
+  html+=`<tr class="eco-subtotal"><td style="font-weight:700;font-size:15px">BASE IMPONIBLE</td><td style="font-size:15px">${fmt(baseImponible)} €</td></tr>
+    <tr><td>IVA 21%</td><td>${fmt(iva)} €</td></tr>
+    <tr class="eco-total"><td>TOTAL PRESUPUESTO CLIENTE</td><td>${fmt(totalCliente)} €</td></tr>
+  </table>`;
+
+  panel.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════════════
+function switchTab(idx) {
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PDF GENERATION
+// ═══════════════════════════════════════════════════════════════
+async function generarPDF() {
+  if (!lastResult) { toast('Primero calcula el presupuesto'); return; }
+  toast('Generando PDF...');
+  try {
+  const jspdfSrc = './jspdf.min.js';
+  await loadScript(jspdfSrc).catch(()=>{ throw new Error('No se pudo cargar jsPDF (jspdf.min.js). Asegúrate de acceder via http://localhost:3000/app.html'); });
+  if (!window.jspdf) throw new Error('jsPDF no se cargó correctamente.');
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:'mm',format:'a4',compress:true});
+  doc.setFont('helvetica');
+
+  // Load images
+  const [logoB64, ...winImgs] = await Promise.all([
+    imgToB64('./logo_valauni.png'),
+    imgToB64('./ventana_fijo.png'),
+    imgToB64('./ventana_corredera_2h.png'),
+    imgToB64('./ventana_practicable_1h.png'),
+    imgToB64('./ventana_practicable_2h.png'),
+    imgToB64('./ventana_ob_1h.png'),
+    imgToB64('./ventana_ob_2h.png'),
+    imgToB64('./puerta_practicable_1h.png'),
+    imgToB64('./puerta_practicable_2h.png'),
+  ]);
+  const imgMap = {
+    fijo: winImgs[0], corredera: winImgs[1],
+    practicable_1h: winImgs[2], practicable_2h: winImgs[3],
+    ob_1h: winImgs[4], ob_2h: winImgs[5],
+    puerta_1h: winImgs[6], puerta_2h: winImgs[7],
+  };
+
+  const PW=210, PH=297, M=15, CW=PW-M*2;
+  let y = 0;
+  let pageNum = 1;
+
+  function drawHeader() {
+    // Banda bicolor
+    doc.setFillColor(18,48,84); doc.rect(0,0,PW/2,50,'F');
+    doc.setFillColor(31,78,121); doc.rect(PW/2,0,PW/2,50,'F');
+    // Logo
+    if (logoB64) {
+      doc.setFillColor(255,255,255);
+      doc.roundedRect(M,4,52,26,3,3,'F');
+      // Mantener proporción original del logo
+      const logoProps = doc.getImageProperties(logoB64);
+      const maxW = 48, maxH = 22;
+      const ratio = logoProps.width / logoProps.height;
+      let lw = maxW, lh = maxW / ratio;
+      if (lh > maxH) { lh = maxH; lw = maxH * ratio; }
+      const lx = M+2 + (maxW - lw)/2;
+      const ly = 6 + (maxH - lh)/2;
+      doc.addImage(logoB64,'PNG',lx,ly,lw,lh,undefined,'FAST');
+    } else {
+      doc.setTextColor(255,255,255); doc.setFontSize(14); doc.setFont('helvetica','bold');
+      doc.text('VALAUNI',M+2,18);
+    }
+    // Separador dorado
+    doc.setDrawColor(210,160,30); doc.setLineWidth(0.8);
+    doc.line(PW/2,5,PW/2,45);
+    // Contacto
+    doc.setFontSize(8); doc.setFont('helvetica','normal');
+    const cx = PW/2+5;
+    const labels = ['Teléfono:','Email:','Web:','Dirección:'];
+    const vals = ['643 14 38 09','solkapit@valauni.net','www.valauni.net','Av. Tuca, 33 E, Mallorca'];
+    labels.forEach((l,i)=>{
+      const ly = 12+i*8;
+      doc.setTextColor(210,160,30); doc.setFont('helvetica','bold'); doc.text(l,cx,ly);
+      doc.setTextColor(255,255,255); doc.setFont('helvetica','normal'); doc.text(vals[i],cx+22,ly);
+    });
+    // Línea dorada
+    doc.setDrawColor(210,160,30); doc.setLineWidth(0.8); doc.line(0,44,PW,44);
+    // Banda PRESUPUESTO
+    doc.setFillColor(219,234,254); doc.rect(0,44,PW,13,'F');
+    doc.setTextColor(31,78,121); doc.setFont('helvetica','bold'); doc.setFontSize(9);
+    const numP = document.getElementById('numPres').value||'---';
+    const fechaP = document.getElementById('fecha').value||new Date().toLocaleDateString('es-ES');
+    doc.text(`Ref: ${numP}`,M,52);
+    doc.text(`Fecha: ${fechaP}`,PW/2-10,52);
+    doc.text('Resp: VALAUNI',PW-M-40,52);
+    y = 57;
+  }
+
+  function checkPage(needed=20) {
+    if (y+needed > PH-20) {
+      drawFooter();
+      doc.addPage();
+      pageNum++;
+      drawHeader();
+    }
+  }
+
+  function drawFooter() {
+    doc.setFillColor(31,78,121);
+    doc.rect(0,PH-16,PW,16,'F');
+    doc.setTextColor(255,255,255); doc.setFontSize(7); doc.setFont('helvetica','normal');
+    doc.text('solkapit@valauni.net | @Valaunioficial | www.valauni.net | 643 14 38 09 | Av. Tuca, 33 E, Mallorca',M,PH-7);
+    doc.setFont('helvetica','bold');
+    doc.text(`Pág. ${pageNum}`,PW-M-10,PH-7);
+  }
+
+  // PAGE 1
+  drawHeader();
+
+  // Cliente block
+  const clienteN = document.getElementById('cliente').value||'';
+  const cifN = document.getElementById('cif').value||'';
+  const telN = document.getElementById('telefono').value||'';
+  const emailN = document.getElementById('email').value||'';
+  const dirN = document.getElementById('direccion').value||'';
+
+  doc.setFillColor(248,250,252); doc.roundedRect(M,y,CW/2-3,28,3,3,'F');
+  doc.setFillColor(248,250,252); doc.roundedRect(PW/2+1,y,CW/2-3,28,3,3,'F');
+  doc.setTextColor(31,78,121); doc.setFont('helvetica','bold'); doc.setFontSize(9);
+  doc.text('DATOS CLIENTE',M+4,y+7);
+  doc.text('OBRA',PW/2+5,y+7);
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(30,41,59);
+  doc.text(`${clienteN}`,M+4,y+14);
+  doc.text(`NIF: ${cifN}`,M+4,y+19);
+  doc.text(`Tel: ${telN} | ${emailN}`,M+4,y+24);
+  doc.text(dirN,PW/2+5,y+14);
+  y+=32;
+
+  // Posiciones
+  doc.setTextColor(31,78,121); doc.setFont('helvetica','bold'); doc.setFontSize(10);
+  doc.text('DETALLE DE CARPINTERÍAS',M,y+7); y+=12;
+
+  const {resultPos,margen,clienteTipo:ct} = lastResult;
+
+  for (let i=0; i<resultPos.length; i++) {
+    const {pos,calc} = resultPos[i];
+    const s = TARIFA[pos.serie];
+    checkPage(55);
+
+    // Header gris
+    doc.setFillColor(226,232,240); doc.rect(M,y,CW,8,'F');
+    doc.setTextColor(30,41,59); doc.setFont('helvetica','bold'); doc.setFontSize(9);
+    doc.text(`Pos. ${i+1} — ${s.nombre}  [${s.tipo.toUpperCase()}${s.hojas>0?' '+s.hojas+'H':''}${s.rpt?' RPT':''}]`,M+3,y+5.5);
+    y+=10;
+
+    // 2 columnas: imagen | datos
+    const imgH=35;
+    // imagen técnica
+    const ikey = s.tipo==='fijo'?'fijo': s.tipo==='corredera'?'corredera': s.tipo==='elevable'?'corredera': s.hojas===2?s.tipo+'_2h':s.tipo+'_1h';
+    const imgB64 = imgMap[ikey]||imgMap['practicable_1h'];
+    if (imgB64) {
+      try { doc.addImage(imgB64,'PNG',M,y,38,imgH,undefined,'FAST'); } catch(e){}
+    }
+    // Datos
+    const dx=M+42;
+    doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(30,41,59);
+    const colorNombre = COLORES[pos.color||'LB']?.nombre || 'Lacado Blanco';
+    const lines=[
+      `Serie: ${s.nombre}`,
+      `Dimensiones: ${pos.ancho}mm × ${pos.alto}mm  (${calc.area.toFixed(2)} m²)`,
+      `Color: ${colorNombre}`,
+      `Vidrio: ${VIDRIOS[pos.vidrio].nombre}`,
+      `Montaje: ${MONTAJE[pos.montaje].nombre}`,
+    ];
+    lines.forEach((l,li)=>{ doc.text(l,dx,y+5+li*6); });
+    // Pie azul pálido
+    doc.setFillColor(219,234,254);
+    doc.rect(M,y+imgH,CW,8,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(31,78,121);
+    doc.text(`Uds: ${pos.uds}`,M+4,y+imgH+5.5);
+    const precioUdConMontaje = pos.precioManual > 0 ? pos.precioManual / pos.uds : (calc.precioVentaUd + calc.montajeUd);
+    doc.text(`P.Unit: ${fmt(precioUdConMontaje)} €`,M+30,y+imgH+5.5);
+    doc.text(`TOTAL: ${fmt(calc.precioTotal)} €`,PW-M-45,y+imgH+5.5);
+    y+=imgH+12;
+  }
+
+  // Otros conceptos
+  if (conceptos.length) {
+    checkPage(20+conceptos.length*7);
+    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(31,78,121);
+    doc.text('OTROS CONCEPTOS',M,y+7); y+=12;
+    for (const c of conceptos) {
+      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(30,41,59);
+      doc.text(c.descripcion,M,y+5);
+      doc.text(`${c.cantidad} ud × ${fmt(c.precio)} € = ${fmt(c.cantidad*c.precio)} €`,PW-M-65,y+5);
+      y+=7;
+    }
+  }
+
+  // Resumen económico
+  checkPage(75);
+  y+=5;
+  const {sumMaterial,sumVidrio:sumVid,sumFabricacion,sumBeneficio,sumMontaje,subtotalPos,otrosTotal,baseImponible,iva,totalCliente} = lastResult;
+  const condX=M, resX=PW/2+5;
+
+  // Condiciones (izq)
+  doc.setFillColor(248,250,252); doc.roundedRect(condX,y,CW/2-5,42,3,3,'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(31,78,121);
+  doc.text('CONDICIONES',condX+4,y+7);
+  doc.setFont('helvetica','normal'); doc.setTextColor(30,41,59);
+  const conds=[
+    'Validez: 7 días desde entrega',
+    'Pago: 70% firma / 30% fin montaje',
+    'Entrega: 30 días laborales',
+    'No incluye: albañilería, andamios',
+    'IBAN: ES46 2100 0676 6902 0037 9991',
+    'Titular: VALAUNI E.S.P.J | CaixaBank',
+  ];
+  conds.forEach((l,li)=>doc.text(l,condX+4,y+14+li*6));
+
+  // Resumen (der)
+  const rx=resX, rw=CW/2-5;
+  doc.setFillColor(219,234,254); doc.roundedRect(rx,y+4,rw,10,2,2,'F');
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(30,41,59);
+  doc.text('BASE IMPONIBLE',rx+4,y+11); doc.setFont('helvetica','bold'); doc.text(`${fmt(baseImponible)} €`,rx+rw-5,y+11,{align:'right'});
+  doc.setFont('helvetica','normal');
+  doc.text('IVA 21%',rx+4,y+19); doc.text(`${fmt(iva)} €`,rx+rw-5,y+19,{align:'right'});
+  doc.setFillColor(31,78,121); doc.rect(rx,y+23,rw,16,'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(11);
+  doc.text('TOTAL',rx+4,y+34); doc.text(`${fmt(totalCliente)} €`,rx+rw-5,y+34,{align:'right'});
+  y+=47;
+
+  // CONTRATO PAGE
+  doc.addPage(); pageNum++;
+  drawHeader();
+  doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(31,78,121);
+  doc.text('CONDICIONES GENERALES DEL CONTRATO',M,y+6); y+=10;
+
+  const sections=[
+    ['PLAZO DE VALIDEZ','7 DÍAS A PARTIR DE LA FECHA DE ENTREGA DEL PRESUPUESTO.'],
+    ['NO INCLUYE','Trabajos de albañilería, medios de elevación a plantas, andamiaje, forrados de chapas a pilares, atornillado a vigas o pilares, así como cualquier otro remate no especificado en el presupuesto.'],
+    ['CONDICIONES DE PAGO','· 70% a la firma del contrato mediante transferencia bancaria. · 30% al finalizar el montaje de la carpintería. NO SE ENTREGARÁ EN OBRA LA CARPINTERÍA HASTA QUE NO ESTÉ SALDADO EL TOTAL DE LOS PORCENTAJES ACORDADOS.'],
+    ['DATOS BANCARIOS','Banco: CaixaBank | Titular: VALAUNI E.S.P.J | CIF: E75948232 | IBAN: ES46 2100 0676 6902 0037 9991'],
+    ['PLAZO DE ENTREGA','Para el comienzo será necesario el contrato firmado y la transferencia del pago a cuenta. Los plazos se fijarán conjuntamente a la aceptación del presupuesto. Si a los 30 días de la fecha de instalación no se puede instalar por demora de obra, se facturará el 95% del pedido quedando un 5% para la finalización. Si la fabricación no se puede realizar hasta una nueva medición tras embaldosar o escayolar, el plazo contará desde la última medición.'],
+    ['MODIFICACIONES Y VARIACIONES','Cualquier modificación de medidas, diseño o accesorio fuera de lo especificado será objeto de nueva oferta (extra). Esta oferta es para la totalidad de las partidas; si alguna es anulada o varía de medidas se recalculará la oferta agregando los gastos ocasionados.'],
+  ];
+
+  for (const [title,body] of sections) {
+    checkPage(25);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(31,78,121);
+    doc.text(title,M,y+3);
+    doc.setFont('helvetica','normal'); doc.setTextColor(30,41,59); doc.setFontSize(7.5);
+    const lines=doc.splitTextToSize(body,CW);
+    doc.text(lines,M,y+7);
+    y+=7+lines.length*3.8+2;
+  }
+
+  checkPage(40);
+  // Firmas
+  doc.setDrawColor(100,116,139); doc.setLineWidth(0.4);
+  doc.line(M,y+25,M+70,y+25);
+  doc.line(PW-M-70,y+25,PW-M,y+25);
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(100,116,139);
+  doc.text('VALAUNI E.S.P.J',M,y+30);
+  doc.text('CLIENTE',PW-M-30,y+30);
+
+  drawFooter();
+
+  const filename = `VALAUNI_${document.getElementById('numPres').value||'presupuesto'}.pdf`;
+  // Use blob + anchor for reliable cross-browser download
+  const blob = doc.output('blob');
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 5000);
+  toast('PDF generado correctamente');
+  } catch(err) {
+    toast('Error al generar PDF: ' + err.message);
+    console.error('generarPDF error:', err);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXCEL EXPORT
+// ═══════════════════════════════════════════════════════════════
+async function exportarExcel() {
+  if (!lastResult) { toast('Primero calcula el presupuesto'); return; }
+  toast('Generando Excel...');
+  await loadScript('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js');
+  const XLSX = window.XLSX;
+  const wb = XLSX.utils.book_new();
+
+  // Hoja Presupuesto
+  const numPres = document.getElementById('numPres').value||'';
+  const cliente = document.getElementById('cliente').value||'';
+  const fecha   = document.getElementById('fecha').value||'';
+  const rows1 = [
+    ['VALAUNI — PRESUPUESTO'],
+    ['Nº:',numPres,'Fecha:',fecha,'Cliente:',cliente],
+    [],
+    ['Pos','Descripción','Serie','Ancho (mm)','Alto (mm)','Uds','P.Unit (€)','Total (€)'],
+  ];
+  const {resultPos,otrosTotal,baseImponible,iva,totalCliente} = lastResult;
+  resultPos.forEach(({pos,calc},i)=>{
+    rows1.push([i+1,pos.descripcion||TARIFA[pos.serie].nombre,TARIFA[pos.serie].nombre,pos.ancho,pos.alto,pos.uds,(calc.precioVentaUd+calc.montajeUd).toFixed(2),calc.precioTotal.toFixed(2)]);
+  });
+  if (otrosTotal>0) {
+    rows1.push([]);
+    rows1.push(['','Otros conceptos','','','','','',otrosTotal.toFixed(2)]);
+  }
+  rows1.push([],['','','','','','','Base imponible',baseImponible.toFixed(2)]);
+  rows1.push(['','','','','','','IVA 21%',iva.toFixed(2)]);
+  rows1.push(['','','','','','','TOTAL',totalCliente.toFixed(2)]);
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows1),'Presupuesto');
+
+  // Hoja Detalle Técnico
+  const rows2=[['Serie','Tipo','Ancho(mm)','Alto(mm)','Uds','Vidrio','Montaje','Coste base ud','Beneficio%','Precio ud','Total pos']];
+  resultPos.forEach(({pos,calc})=>{
+    const s=TARIFA[pos.serie];
+    rows2.push([s.nombre,s.tipo,pos.ancho,pos.alto,pos.uds,COLORES[pos.color||'LB']?.nombre||'Lacado Blanco',VIDRIOS[pos.vidrio].nombre,MONTAJE[pos.montaje].nombre,
+      calc.costeBaseUd.toFixed(2),calc.margenPct+'%',calc.precioVentaUd.toFixed(2),calc.precioTotal.toFixed(2)]);
+  });
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows2),'Detalle Técnico');
+
+  XLSX.writeFile(wb,`VALAUNI_${numPres||'presupuesto'}.xlsx`);
+  toast('Excel generado correctamente');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════
+function fmt(n) { return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+async function imgToB64(url) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    return new Promise(res2 => {
+      const r = new FileReader();
+      r.onloadend=()=>res2(r.result);
+      r.onerror=()=>res2(null);
+      r.readAsDataURL(blob);
+    });
+  } catch { return null; }
+}
+
+function loadScript(src) {
+  return new Promise((resolve,reject)=>{
+    if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
+    const s=document.createElement('script');
+    s.src=src; s.onload=resolve; s.onerror=reject;
+    document.head.appendChild(s);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// MULTI-PROJECT MANAGEMENT
+// ═══════════════════════════════════════════════════════════════
+const STATUS_LABELS = {borrador:'Borrador',enviado:'Enviado',aceptado:'Aceptado',en_obra:'En obra',finalizado:'Finalizado',cancelado:'Cancelado'};
+let currentProjectId = null;
+let currentStatus = 'borrador';
+
+function getProjects() {
+  try { return JSON.parse(localStorage.getItem('valauni_projects_v2')||'[]'); } catch{ return []; }
+}
+function saveProjects(list) {
+  localStorage.setItem('valauni_projects_v2', JSON.stringify(list));
+}
+function getProjectById(id) { return getProjects().find(p=>p.id===id)||null; }
+
+function projectSnapshot() {
+  return {
+    id: currentProjectId,
+    status: currentStatus,
+    numPres: document.getElementById('numPres').value,
+    fecha: document.getElementById('fecha').value,
+    cliente: document.getElementById('cliente').value,
+    cif: document.getElementById('cif').value,
+    telefono: document.getElementById('telefono').value,
+    email: document.getElementById('email').value,
+    direccion: document.getElementById('direccion').value,
+    posiciones, conceptos, clienteTipo, posIdCounter, concIdCounter,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function persistCurrentProject() {
+  if (!currentProjectId) return;
+  const snap = projectSnapshot();
+  const list = getProjects();
+  const idx = list.findIndex(p=>p.id===currentProjectId);
+  if (idx>=0) list[idx]={...list[idx],...snap};
+  else list.push({...snap, createdAt: snap.updatedAt});
+  saveProjects(list);
+}
+
+function nuevoPresupuesto() {
+  currentProjectId = crypto.randomUUID();
+  currentStatus = 'borrador';
+  // Clear form
+  document.getElementById('numPres').value = genNextNum();
+  document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+  ['cliente','cif','telefono','email','direccion'].forEach(id=>document.getElementById(id).value='');
+  posiciones=[]; conceptos=[]; clienteTipo='particular'; posIdCounter=0; concIdCounter=0;
+  document.querySelector('input[name="clienteTipo"][value="particular"]').checked=true;
+  renderPosiciones(); renderConceptos(); updateBadgeOtros();
+  addPosicion();
+  // Save new blank project
+  const list = getProjects();
+  list.push({...projectSnapshot(), createdAt: new Date().toISOString()});
+  saveProjects(list);
+  showEditor();
+}
+
+function openProject(id) {
+  const p = getProjectById(id);
+  if (!p) return;
+  currentProjectId = id;
+  currentStatus = p.status||'borrador';
+  document.getElementById('numPres').value = p.numPres||'';
+  document.getElementById('fecha').value = p.fecha||'';
+  document.getElementById('cliente').value = p.cliente||'';
+  document.getElementById('cif').value = p.cif||'';
+  document.getElementById('telefono').value = p.telefono||'';
+  document.getElementById('email').value = p.email||'';
+  document.getElementById('direccion').value = p.direccion||'';
+  posiciones = p.posiciones||[]; conceptos = p.conceptos||[];
+  clienteTipo = p.clienteTipo||'particular';
+  posIdCounter = p.posIdCounter||0; concIdCounter = p.concIdCounter||0;
+  const r=document.querySelector(`input[name="clienteTipo"][value="${clienteTipo}"]`);
+  if(r) r.checked=true;
+  renderPosiciones(); renderConceptos(); updateBadgeOtros();
+  if (!posiciones.length) addPosicion();
+  showEditor();
+}
+
+function deleteProject(id) {
+  if (!confirm('¿Eliminar este presupuesto?')) return;
+  const list = getProjects().filter(p=>p.id!==id);
+  saveProjects(list);
+  renderHome();
+}
+
+function duplicateProject(id, e) {
+  e.stopPropagation();
+  const p = getProjectById(id);
+  if (!p) return;
+  const copy = {...p, id: crypto.randomUUID(), numPres: p.numPres+'-COPIA', status:'borrador',
+    createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()};
+  const list = getProjects();
+  list.push(copy);
+  saveProjects(list);
+  renderHome();
+}
+
+function setCurrentStatus(val) {
+  currentStatus = val;
+  persistCurrentProject();
+}
+
+function genNextNum() {
+  const list = getProjects();
+  const nums = list.map(p=>{ const m=p.numPres?.match(/(\d+)$/); return m?parseInt(m[1]):0; });
+  const next = nums.length ? Math.max(...nums)+1 : 1;
+  return `VAL-${String(next).padStart(3,'0')}`;
+}
+
+function getProjectTotal(p) {
+  if (!p.posiciones?.length) return 0;
+  const margen = MARGENES[p.clienteTipo||'particular'].pct;
+  return p.posiciones.reduce((sum,pos) => {
+    try {
+      const c = calcularPosicion(pos, margen);
+      return sum + c.precioTotal;
+    } catch { return sum; }
+  },0) + (p.conceptos||[]).reduce((s,c)=>s+c.cantidad*c.precio,0);
+}
+
+function showHome() {
+  persistCurrentProject();
+  document.getElementById('pantalla-home').style.display='block';
+  document.getElementById('pantalla-editor').style.display='none';
+  document.getElementById('header-editor-controls').style.display='none';
+  renderHome();
+}
+
+function showEditor() {
+  document.getElementById('pantalla-home').style.display='none';
+  document.getElementById('pantalla-editor').style.display='block';
+  const ctrl = document.getElementById('header-editor-controls');
+  ctrl.style.display='flex';
+  document.getElementById('header-status').value = currentStatus;
+  document.getElementById('num-pres').textContent = document.getElementById('numPres').value;
+  lastResult = null;
+  document.getElementById('resultados-card').style.display='none';
+}
+
+function guardarYVolver() {
+  persistCurrentProject();
+  showHome();
+}
+
+function renderHome() {
+  const list = getProjects();
+  const q = document.getElementById('home-search').value.toLowerCase();
+  const flt = document.getElementById('home-filter').value;
+
+  // Stats
+  const activos = list.filter(p=>!['cancelado','finalizado'].includes(p.status||'borrador'));
+  const aceptados = list.filter(p=>['aceptado','en_obra'].includes(p.status||'borrador'));
+  document.getElementById('stat-total').textContent = list.length;
+  document.getElementById('stat-activos').textContent = activos.length;
+  document.getElementById('stat-pendiente').textContent = fmt(activos.reduce((s,p)=>s+getProjectTotal(p),0))+' €';
+  document.getElementById('stat-aceptados').textContent = fmt(aceptados.reduce((s,p)=>s+getProjectTotal(p),0))+' €';
+
+  const visible = list
+    .filter(p => !flt || (p.status||'borrador')===flt)
+    .filter(p => !q || (p.numPres||'').toLowerCase().includes(q) || (p.cliente||'').toLowerCase().includes(q) || (p.direccion||'').toLowerCase().includes(q))
+    .sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||''));
+
+  const el = document.getElementById('proj-list');
+  if (!visible.length) {
+    el.innerHTML = `<div class="empty-home"><div class="empty-icon">📋</div><p>${list.length?'Sin resultados':'No hay presupuestos aún'}</p>${!list.length?`<button class="btn btn-blue" style="margin-top:14px" onclick="nuevoPresupuesto()"><i class="fas fa-plus"></i> Crear primero</button>`:''}</div>`;
+    return;
+  }
+  el.innerHTML = visible.map(p => {
+    const total = getProjectTotal(p);
+    const st = p.status||'borrador';
+    const date = p.updatedAt ? new Date(p.updatedAt).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'2-digit'}) : '';
+    return `<div class="proj-row" onclick="openProject('${p.id}')">
+      <div><div class="proj-num">${escHtml(p.numPres||'—')}</div><div class="proj-date">${date}</div></div>
+      <div><div class="proj-client">${escHtml(p.cliente||'Sin cliente')}</div></div>
+      <div class="proj-desc">${escHtml(p.direccion||p.numPres||'')}</div>
+      <div class="proj-total">${fmt(total)} €</div>
+      <div><span class="status-badge sb-${st}">${STATUS_LABELS[st]||st}</span></div>
+      <div class="proj-actions">
+        <button onclick="duplicateProject('${p.id}',event)" title="Duplicar">⧉</button>
+        <button class="del" onclick="event.stopPropagation();deleteProject('${p.id}')" title="Eliminar">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// localStorage persistence
+// ═══════════════════════════════════════════════════════════════
+function saveState() {
+  persistCurrentProject();
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('valauni_v2');
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    document.getElementById('numPres').value = d.numPres||'';
+    document.getElementById('fecha').value = d.fecha||'';
+    document.getElementById('cliente').value = d.cliente||'';
+    document.getElementById('cif').value = d.cif||'';
+    document.getElementById('telefono').value = d.telefono||'';
+    document.getElementById('email').value = d.email||'';
+    document.getElementById('direccion').value = d.direccion||'';
+    posiciones = d.posiciones||[];
+    conceptos  = d.conceptos||[];
+    clienteTipo= d.clienteTipo||'particular';
+    posIdCounter= d.posIdCounter||0;
+    concIdCounter=d.concIdCounter||0;
+    // Restore client type radio
+    const r=document.querySelector(`input[name="clienteTipo"][value="${clienteTipo}"]`);
+    if(r) r.checked=true;
+    renderPosiciones();
+    renderConceptos();
+    updateBadgeOtros();
+  } catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AUTO-SAVE & INIT
+// ═══════════════════════════════════════════════════════════════
+let autoSaveTimer=null;
+function scheduleAutoSave() {
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer=setTimeout(saveState,1500);
+}
+document.addEventListener('change',scheduleAutoSave);
+document.addEventListener('input',scheduleAutoSave);
+
+function init() {
+  // Migrate legacy single-project localStorage to multi-project list
+  const legacy = localStorage.getItem('valauni_v2');
+  if (legacy && !localStorage.getItem('valauni_projects_v2')) {
+    try {
+      const d = JSON.parse(legacy);
+      if (d.numPres) {
+        const migrated = {...d, id: crypto.randomUUID(), status:'borrador',
+          createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()};
+        saveProjects([migrated]);
+      }
+    } catch{}
+  }
+
+  // numPres input syncs header
+  document.getElementById('numPres').addEventListener('input',()=>{
+    document.getElementById('num-pres').textContent=document.getElementById('numPres').value;
+    persistCurrentProject();
+  });
+
+  // Always start on home screen
+  showHome();
+}
+
+init();
+</script>
+</body>
+</html>
